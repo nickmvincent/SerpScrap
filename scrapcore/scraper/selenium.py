@@ -238,8 +238,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
     def _get_Chrome(self):
         try:
             chrome_ops = webdriver.ChromeOptions()
+            prefs = {"profile.default_content_settings.geolocation" : "1"}
+            chrome_ops.add_experimental_option("prefs", prefs)
             if self.proxy:
-                chrome_ops = webdriver.ChromeOptions()
                 chrome_ops.add_argument(
                     '--proxy-server={}://{}:{}'.format(
                         self.proxy.proto,
@@ -254,18 +255,18 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
             chrome_ops.add_argument('--no-sandbox')
             chrome_ops.add_argument('--start-maximized')
-            chrome_ops.add_argument(
-                '--window-position={},{}'.format(
-                    randint(10, 30),
-                    randint(10, 30)
-                )
-            )
-            chrome_ops.add_argument(
-                '--window-size={},{}'.format(
-                    randint(800, 1024),
-                    randint(600, 900)
-                )
-            )
+            # chrome_ops.add_argument(
+            #     '--window-position={},{}'.format(
+            #         randint(10, 30),
+            #         randint(10, 30)
+            #     )
+            # )
+            # chrome_ops.add_argument(
+            #     '--window-size={},{}'.format(
+            #         randint(800, 1024),
+            #         randint(600, 900)
+            #     )
+            # )
             self.webdriver = webdriver.Chrome(
                 executable_path=self.config['executable_path'],
                 chrome_options=chrome_ops
@@ -337,8 +338,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                     )
 
             useragent = random_user_agent(
-                mobile=False
+                mobile=self.config.get('mobile_user_agent', False)
             )
+            print('USERAGENT: {}'.format(useragent))
             logger.info('useragent: {}'.format(useragent))
             dcap = dict(DesiredCapabilities.PHANTOMJS)
             dcap["phantomjs.page.settings.userAgent"] = useragent
@@ -677,6 +679,42 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
             self.wait_until_serp_loaded()
 
+            self.webdriver.execute_script(
+                """
+                window.navigator.geolocation.getCurrentPosition=function(success){
+                    console.log('getCurrentPositionCalled');
+                    var position = {
+                        "coords" : {
+                            "latitude": "42.7749",
+                            "longitude": "-122.4194",
+                            "accuracy": "150",
+                        }
+                    };
+                    success(position);
+                };
+                function geoSuccess(position) {
+                    console.log('geoSuccess');
+                    console.log(window.navigator.geolocation);
+                    console.log(position.coords.latitude);
+                };
+                window.navigator.geolocation.getCurrentPosition(
+                    geoSuccess
+                );
+                """
+            )
+            # this sleep appears to be mandatory for the update location to work
+            # throws 400 error otherwise...
+            time.sleep(5)
+            self.webdriver.execute_script(
+                """
+                var updateElement = document.getElementById('swml-upd');
+                updateElement.click();
+                """
+            )
+            time.sleep(1)
+            self.webdriver.refresh()
+            # this sleep is just for human testing...
+            time.sleep(10)
             try:
                 if self.config.get('screenshot') is True:
                     self._save_debug_screenshot()
