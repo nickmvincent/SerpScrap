@@ -54,14 +54,14 @@ class CsvStreamWriter():
 
 class ScrapeJobGenerator():
 
-    def get(self, keywords, search_engines, scrape_method, num_pages):
+    def get(self, keywords, search_instances, scrape_method, num_pages):
         """Get scrape jobs by keywords."""
         for keyword in keywords:
-            for search_engine in search_engines:
+            for search_instance in search_instances:
                 for page in range(1, num_pages + 1):
                     yield {
                         'query': keyword,
-                        'search_engine': search_engine,
+                        'search_engine': search_instance.get('engine'),
                         'scrape_method': scrape_method,
                         'page_number': page
                     }

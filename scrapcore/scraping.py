@@ -81,7 +81,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         self.cache_manager = cache_manager
 
         jobs = jobs or {}
-        self.search_engine_name = search_engine.lower()
+        self.search_engine_name = search_engine['engine'].lower()
 
         assert self.search_engine_name, 'You need to specify an search_engine'
 

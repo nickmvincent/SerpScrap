@@ -28,25 +28,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 logger = logging.getLogger(__name__)
 
 
-def get_selenium_scraper_by_search_engine_name(config, search_engine_name, *args, **kwargs):
+def get_selenium_scraper_by_search_engine_name(config, search_instance, *args, **kwargs):
     """Get the appropriate selenium scraper for the given search engine name.
 
     Args:
-        search_engine_name: The search engine name.
+        search_instance: The search engine dict, with key 'engine, 'latitude', and 'longitude'
         args: The arguments for the target search engine instance creation.
         kwargs: The keyword arguments for the target search engine instance.
     Returns;
         Either a concrete SelScrape instance specific for the given
         search engine or the abstract SelScrape object.
     """
+    search_engine_name = search_instance['engine']
     class_name = search_engine_name[0].upper() + search_engine_name[1:].lower() + 'SelScrape'
     ns = globals()
     if class_name in ns:
         return ns[class_name](config, *args, **kwargs)
 
-    return SelScrape(config, *args, **kwargs)
+    return SelScrape(config, search_instance, *args, **kwargs)
 
-
+# TODO: after adding the search_instance argument to SelScrape, the children classes are likely broken. 
+# Not critical since we're only doing Google right now, but fix later for others
 class SelScrape(SearchEngineScrape, threading.Thread):
     """
     Instances of this class make use of selenium browser objects
@@ -114,7 +116,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'baiduimg': 'http://image.baidu.com/',
     }
 
-    def __init__(self, config, *args, captcha_lock=None, browser_num=1, **kwargs):
+    def __init__(self, config, search_instance, *args, captcha_lock=None, browser_num=1, **kwargs):
         """Create a new SelScraper thread Instance.
 
         Args:
@@ -123,6 +125,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             browser_num: A unique, semantic number for each thread.
         """
         self.search_input = None
+        self.search_instance = search_instance
 
         threading.Thread.__init__(self)
         SearchEngineScrape.__init__(self, config, *args, **kwargs)
@@ -677,14 +680,16 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
         for self.page_number in self.pages_per_keyword:
             self.wait_until_serp_loaded()
+            lat = self.search_instance['latitude']
+            lng = self.search_instance['longitude']
             self.webdriver.execute_script(
                 """
                 window.navigator.geolocation.getCurrentPosition=function(success){
                     console.log('getCurrentPositionCalled');
                     var position = {
                         "coords" : {
-                            "latitude": "42.7749",
-                            "longitude": "-122.4194",
+                            "latitude": "%s",
+                            "longitude": "%s",
                             "accuracy": "150",
                         }
                     };
@@ -698,7 +703,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 window.navigator.geolocation.getCurrentPosition(
                     geoSuccess
                 );
-                """
+                """ % (str(lat), str(lng))
             )
             # this sleep appears to be mandatory for the update location to work
             # throws 400 error otherwise...

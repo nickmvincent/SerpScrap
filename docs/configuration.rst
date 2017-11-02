@@ -24,7 +24,7 @@ Default configuration
 * num_results_per_page: 10            - number results per searchengine page
 * proxy_file: ''                      - path to proxy file, see below
 * scrape_urls: False                  - scrape urls of search results
-* search_engines: ['google']          - search engines (google)
+* search_instances: [{engine:'google'}] - search engines/location
 * url_threads: 3                      - number of threads if scrape_urls is true
 * use_own_ip: True                    - if using proxies set to False
 * sleeping_min: 5                     - min seconds to sleep between scrapes
@@ -63,7 +63,7 @@ Using your own configuration
       'num_pages_for_keyword': 2,
       'proxy_file': '',
       'scrape_urls': True,
-      'search_engines': ['google'],
+      'search_instance': [{'engine':'google'}],
       'url_threads': 3,
    }
    

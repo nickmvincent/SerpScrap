@@ -20,7 +20,7 @@ class Config():
 
     config = {
         'use_own_ip': True,
-        'search_engines': ['google'],
+        'search_instances': [{'engine': 'google'}],
         'num_pages_for_keyword': 2,
         'scrape_method': 'selenium',
         'sel_browser': 'phantomjs',

@@ -51,7 +51,7 @@ class GoogleParser(Parser):
         },
         'tweets_searched': {
             'us_ip_tweets_items': {
-                'container': 'g-inner-card._dCh ',
+                'container': 'g-inner-card._dCh._KBh',
                 'link': 'g-inner-card a::attr(href)',
                 'snippet': 'g-inner-card::text',
                 'title': 'g-inner-card div._Jvo::text',

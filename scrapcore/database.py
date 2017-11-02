@@ -33,8 +33,8 @@ class ScraperSearch(Base):
     __tablename__ = 'scraper_search'
 
     id = Column(Integer, primary_key=True)
-    number_search_engines_used = Column(Integer)
-    used_search_engines = Column(String)
+    number_search_instances_used = Column(Integer)
+    used_search_instances = Column(String)
     number_proxies_used = Column(Integer)
     number_search_queries = Column(Integer)
     started_searching = Column(DateTime, default=datetime.datetime.utcnow)
@@ -253,7 +253,7 @@ class Proxy(Base):
 db_Proxy = Proxy
 
 
-class SearchEngine(Base):
+class SearchInstance(Base):
     __tablename__ = 'search_engine'
 
     id = Column(Integer, primary_key=True)
@@ -261,6 +261,8 @@ class SearchEngine(Base):
     http_url = Column(String)
     selenium_url = Column(String)
     image_url = Column(String)
+    latitude = Column(String)
+    longitude = Column(String)
 
 
 class SearchEngineProxyStatus(Base):
@@ -313,10 +315,10 @@ def fixtures(config, session):
     """Add some base data."""
     for se in config.get('supported_search_engines', []):
         if se:
-            search_engine = session.query(SearchEngine).filter(
-                SearchEngine.name == se
+            search_instance = session.query(SearchInstance).filter(
+                SearchInstance.name == se
             ).first()
-            if not search_engine:
-                session.add(SearchEngine(name=se))
+            if not search_instance:
+                session.add(SearchInstance(name=se))
 
     session.commit()

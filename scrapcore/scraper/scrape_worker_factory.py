@@ -3,7 +3,7 @@
 
 class ScrapeWorkerFactory():
     def __init__(self, config, cache_manager=None, mode=None, proxy=None,
-                 search_engine=None, session=None, db_lock=None,
+                 search_instance=None, session=None, db_lock=None,
                  cache_lock=None, scraper_search=None, captcha_lock=None,
                  progress_queue=None, browser_num=1):
 
@@ -11,7 +11,7 @@ class ScrapeWorkerFactory():
         self.cache_manager = cache_manager
         self.mode = mode
         self.proxy = proxy
-        self.search_engine = search_engine
+        self.search_instance = search_instance
         self.session = session
         self.db_lock = db_lock
         self.cache_lock = cache_lock
@@ -24,7 +24,7 @@ class ScrapeWorkerFactory():
 
     def is_suitabe(self, job):
 
-        return job['scrape_method'] == self.mode and job['search_engine'] == self.search_engine
+        return job['scrape_method'] == self.mode and job['search_engine'] == self.search_instance['engine']
 
     def add_job(self, job):
 
@@ -44,9 +44,9 @@ class ScrapeWorkerFactory():
                 from scrapcore.scraper.selenium import get_selenium_scraper_by_search_engine_name
                 return get_selenium_scraper_by_search_engine_name(
                     self.config,
-                    self.search_engine,
+                    self.search_instance,
                     cache_manager=self.cache_manager,
-                    search_engine=self.search_engine,
+                    search_engine=self.search_instance,
                     jobs=self.jobs,
                     session=self.session,
                     scraper_search=self.scraper_search,

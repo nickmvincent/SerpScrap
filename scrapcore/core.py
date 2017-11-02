@@ -39,15 +39,11 @@ class Core():
         proxy_file = config.get('proxy_file', '')
 
         # when no search engine is specified, use google
-        search_engines = config.get('search_engines', ['google'])
-        if not isinstance(search_engines, list):
-            if search_engines == '*':
-                search_engines = config.get('supported_search_engines')
-            else:
-                search_engines = search_engines.split(',')
-        search_engines = set(search_engines)
+        search_instances = config.get('search_instances', [{'engine':'google'}])
+        if not isinstance(search_instances, list):
+            raise ValueError('Please provide a list of search instance objects')
 
-        num_search_engines = len(search_engines)
+        num_search_instances = len(search_instances)
         num_workers = int(config.get('num_workers'))
         scrape_method = config.get('scrape_method')
         pages = int(config.get('num_pages_for_keyword', 1))
@@ -63,7 +59,7 @@ class Core():
         if not scrape_jobs:
             scrape_jobs = ScrapeJobGenerator().get(
                 keywords,
-                search_engines,
+                search_instances,
                 scrape_method,
                 pages
             )
@@ -92,11 +88,13 @@ class Core():
         Proxies().add_proxies_to_db(proxies, session)
 
         scraper_search = ScraperSearch(
-            number_search_engines_used=num_search_engines,
+            number_search_instances_used=num_search_instances,
             number_proxies_used=len(proxies),
             number_search_queries=len(keywords),
             started_searching=datetime.datetime.utcnow(),
-            used_search_engines=','.join(search_engines)
+            used_search_instances=','.join(
+                [instance['engine'] for instance in search_instances]
+            )
         )
 
         # First of all, lets see how many requests remain
@@ -126,7 +124,7 @@ class Core():
                 proxies by using {num_threads} threads.'''.format(
                 num_keywords=len(list(scrape_jobs)),
                 num_proxies=len(proxies),
-                num_threads=num_search_engines)
+                num_threads=num_search_instances)
             )
 
             progress_thread = None
@@ -138,7 +136,7 @@ class Core():
 
             workers = queue.Queue()
             num_worker = 0
-            for search_engine in search_engines:
+            for search_instance in search_instances:
 
                 for proxy in proxies:
                     for worker in range(num_workers):
@@ -149,7 +147,7 @@ class Core():
                                 cache_manager=cache_manager,
                                 mode=method,
                                 proxy=proxy,
-                                search_engine=search_engine,
+                                search_instance=search_instance,
                                 session=session,
                                 db_lock=db_lock,
                                 cache_lock=cache_lock,
