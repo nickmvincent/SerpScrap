@@ -264,7 +264,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         time.sleep(self.current_delay)
 
     def after_search(self):
-        """Store the results and parse em.
+        """Store the results and parse them.
         Notify the progress queue if necessary.
         """
         self.search_number += 1

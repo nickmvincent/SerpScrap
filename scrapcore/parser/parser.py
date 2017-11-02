@@ -137,20 +137,27 @@ class Parser():
             '''.format(attr_name))
 
         for result_type, selector_class in selector_dict.items():
-
+            # might be "key:ads_main, value:{us_ip: {...}, de_ip: {...}}"
+            # for example, one iteration of this loop would handle all the "ads_main" items
             self.search_results[result_type] = []
             self.related_keywords[result_type] = []
+            print(result_type)
 
             for _, selectors in selector_class.items():
+                # each key will be "us_ip, de_ip, etc"
+                # each value (selectors) is yet another dict, the key is name of selector (e.g. "container")
+                # and the values in "selectors" is the actual css selector (e.g. "#center_col")
 
+                # this means the us_ip selectors AND the de_ip selectors will be used, but duplicates are not logged
                 if 'result_container' in selectors and selectors['result_container']:
                     css = '{container} {result_container}'.format(**selectors)
                 else:
                     css = selectors['container']
-
+                print(self.css_to_xpath(css))
                 results = self.dom.xpath(
                     self.css_to_xpath(css)
                 )
+                print(results)
 
                 to_extract = set(selectors.keys()) - {'container', 'result_container'}
                 selectors_to_use = {key: selectors[key] for key in to_extract if key in selectors.keys()}
@@ -174,8 +181,12 @@ class Parser():
                                  if e['link'] == serp_result['link']]:
                         self.search_results[result_type].append(serp_result)
                         self.num_results += 1
+                    elif result_type == 'knowledge_panel':
+                        self.search_results[result_type].append(serp_result)
+                        self.num_results += 1
                     if 'keyword' in serp_result and serp_result['keyword']:
                         self.related_keywords[result_type].append(serp_result)
+
 
     def advanced_css(self, selector, element):
         """Evaluate the :text and ::attr(attr-name) additionally.
@@ -248,15 +259,15 @@ class Parser():
 
     @property
     def cleaned_html(self):
-        # Try to parse the provided HTML string using lxml
-        # strip all unnecessary information to save space
+        """Try to parse the provided HTML string using lxml
+        strip all unnecessary information to save space"""
         cleaner = Cleaner()
         cleaner.scripts = True
         cleaner.javascript = True
         cleaner.comments = True
         cleaner.style = True
         self.dom = cleaner.clean_html(self.dom)
-        assert len(self.dom), 'The html needs to be parsed to get the cleaned html'
+        assert self.dom, 'The html needs to be parsed to get the cleaned html'
         return lxml.html.tostring(self.dom)
 
     def iter_serp_items(self):

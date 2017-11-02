@@ -676,9 +676,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         super().keyword_info()
 
         for self.page_number in self.pages_per_keyword:
-
             self.wait_until_serp_loaded()
-
             self.webdriver.execute_script(
                 """
                 window.navigator.geolocation.getCurrentPosition=function(success){
@@ -704,6 +702,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             )
             # this sleep appears to be mandatory for the update location to work
             # throws 400 error otherwise...
+            # TODO: test if we can go below 5 seconds to speed this up
             time.sleep(5)
             self.webdriver.execute_script(
                 """
