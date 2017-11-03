@@ -66,6 +66,9 @@ class SearchEngineResultsPage(Base):
     page_number = Column(Integer)
     requested_at = Column(DateTime, default=datetime.datetime.utcnow)
     requested_by = Column(String, default='127.0.0.1')
+    latitude = Column(String)
+    longitude = Column(String)
+
 
     # string in SERP indicates how many results we got for the search term.
     num_results_for_query = Column(String, default='')
@@ -261,9 +264,7 @@ class SearchInstance(Base):
     http_url = Column(String)
     selenium_url = Column(String)
     image_url = Column(String)
-    latitude = Column(String)
-    longitude = Column(String)
-
+    
 
 class SearchEngineProxyStatus(Base):
     """Stores last proxy status for the given search engine.

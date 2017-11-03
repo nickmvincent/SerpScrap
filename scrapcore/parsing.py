@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class Parsing():
+    """This class handles HTML parsing"""
 
     def get_parser_by_url(self, url):
         """Get the appropriate parser by an search engine url."""
@@ -33,15 +34,15 @@ class Parsing():
                    html=None,
                    parser=None,
                    scraper=None,
-                   search_engine=None,
-                   query=''):
+                   search_instance=None,
+                   query='',):
         """parse and store data in the sqlalchemy session.
         Returns:
             The parsed SERP object.
         """
 
         if not parser and html:
-            parser = self.get_parser_by_search_engine(search_engine)
+            parser = self.get_parser_by_search_engine(search_instance['engine'])
             parser = parser(config, query=query)
             parser.parse(html)
 
@@ -54,5 +55,7 @@ class Parsing():
             serp.set_values_from_parser(parser)
         if scraper:
             serp.set_values_from_scraper(scraper)
+        serp.latitude = search_instance['latitude']
+        serp.longitude = search_instance['longitude']
 
         return serp

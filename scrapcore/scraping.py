@@ -197,7 +197,8 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
                 self.config,
                 parser=self.parser,
                 scraper=self,
-                query=self.query
+                query=self.query,
+                search_instance=self.search_instance
             )
 
             self.scraper_search.serps.append(serp)

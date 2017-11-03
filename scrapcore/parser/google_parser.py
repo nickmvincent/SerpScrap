@@ -52,17 +52,17 @@ class GoogleParser(Parser):
         'tweets_searched': {
             'us_ip_tweets_items': {
                 'container': 'g-inner-card._dCh._KBh',
-                'link': 'g-inner-card a::attr(href)',
+                'link': 'g-inner-card g-link a::attr(href)',
                 'snippet': 'g-inner-card::text',
                 'title': 'g-inner-card div._Jvo::text',
-                'visible_link': 'g-inner-card cite::text',
+                'visible_link': 'g-inner-card a._Lgi::text',
                 'rating': 'div.osl a:first-of-type::text',
                 'sitelinks': 'div.osl::text'
             },
         },
         'news': {
             'de_ip_news_items': {
-                'container': 'g-inner-card._KBh',
+                'container': 'g-inner-card[class=_KBh]',
                 'link': 'g-inner-card a::attr(href)',
                 'snippet': 'g-inner-card::text',
                 'title': 'g-inner-card div._Jvo::text',
