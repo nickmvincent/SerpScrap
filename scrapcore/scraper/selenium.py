@@ -680,45 +680,46 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
         for self.page_number in self.pages_per_keyword:
             self.wait_until_serp_loaded()
-            lat = self.search_instance['latitude']
-            lng = self.search_instance['longitude']
-            self.webdriver.execute_script(
-                """
-                window.navigator.geolocation.getCurrentPosition=function(success){
-                    console.log('getCurrentPositionCalled');
-                    var position = {
-                        "coords" : {
-                            "latitude": "%s",
-                            "longitude": "%s",
-                            "accuracy": "150",
-                        }
+            lat = self.search_instance.get('latitude')
+            lng = self.search_instance.get('longitude')
+            if lat and lng:
+                self.webdriver.execute_script(
+                    """
+                    window.navigator.geolocation.getCurrentPosition=function(success){
+                        console.log('getCurrentPositionCalled');
+                        var position = {
+                            "coords" : {
+                                "latitude": "%s",
+                                "longitude": "%s",
+                                "accuracy": "150",
+                            }
+                        };
+                        success(position);
                     };
-                    success(position);
-                };
-                function geoSuccess(position) {
-                    console.log('geoSuccess');
-                    console.log(window.navigator.geolocation);
-                    console.log(position.coords.latitude);
-                };
-                window.navigator.geolocation.getCurrentPosition(
-                    geoSuccess
-                );
-                """ % (str(lat), str(lng))
-            )
-            # this sleep appears to be mandatory for the update location to work
-            # throws 400 error otherwise...
-            # TODO: test if we can go below 5 seconds to speed this up
-            time.sleep(5)
-            self.webdriver.execute_script(
-                """
-                var updateElement = document.getElementById('swml-upd');
-                updateElement.click();
-                """
-            )
-            time.sleep(1)
-            self.webdriver.refresh()
-            # this sleep is just for human testing...
-            time.sleep(10)
+                    function geoSuccess(position) {
+                        console.log('geoSuccess');
+                        console.log(window.navigator.geolocation);
+                        console.log(position.coords.latitude);
+                    };
+                    window.navigator.geolocation.getCurrentPosition(
+                        geoSuccess
+                    );
+                    """ % (str(lat), str(lng))
+                )
+                # this sleep appears to be mandatory for the update location to work
+                # throws 400 error otherwise...
+                # TODO: test if we can go below 5 seconds to speed this up
+                time.sleep(5)
+                self.webdriver.execute_script(
+                    """
+                    var updateElement = document.getElementById('swml-upd');
+                    updateElement.click();
+                    """
+                )
+                time.sleep(1)
+                self.webdriver.refresh()
+                # this sleep is just for human testing...
+                time.sleep(10)
             try:
                 if self.config.get('screenshot') is True:
                     self._save_debug_screenshot()

@@ -141,7 +141,6 @@ class Parser():
             # for example, one iteration of this loop would handle all the "ads_main" items
             self.search_results[result_type] = []
             self.related_keywords[result_type] = []
-            print(result_type)
 
             for _, selectors in selector_class.items():
                 # each key will be "us_ip, de_ip, etc"
@@ -153,11 +152,9 @@ class Parser():
                     css = '{container} {result_container}'.format(**selectors)
                 else:
                     css = selectors['container']
-                print(self.css_to_xpath(css))
                 results = self.dom.xpath(
                     self.css_to_xpath(css)
                 )
-                print(results)
 
                 to_extract = set(selectors.keys()) - {'container', 'result_container'}
                 selectors_to_use = {key: selectors[key] for key in to_extract if key in selectors.keys()}
@@ -171,19 +168,18 @@ class Parser():
                         serp_result[key] = self.advanced_css(selector, result)
 
                     serp_result['rank'] = index + 1
-
                     # only add items that have not None links.
                     # Avoid duplicates. Detect them by the link.
                     # If statement below: Lazy evaluation.
                     # The more probable case first.
-                    if result_type == 'tweets_searched':
+                    if serp_result['rank'] == 1:
                         print(serp_result)
                     if 'link' in serp_result and serp_result['link'] and \
                             not [e for e in self.search_results[result_type]
                                  if e['link'] == serp_result['link']]:
                         self.search_results[result_type].append(serp_result)
                         self.num_results += 1
-                    elif result_type == 'knowledge_panel' or result_type == 'tweets_searched':
+                    elif result_type == 'knowledge_panel' or result_type == 'tweets' or result_type == 'maps_places':
                         self.search_results[result_type].append(serp_result)
                         self.num_results += 1
                     if 'keyword' in serp_result and serp_result['keyword']:

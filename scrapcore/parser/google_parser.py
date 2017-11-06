@@ -31,9 +31,9 @@ class GoogleParser(Parser):
             'us_ip': {
                 'container': '#center_col',
                 'result_container': 'div.g ',
-                'link': 'h3.r > a:first-of-type::attr(href)',
+                'link': 'h3.r a:first-of-type::attr(href)',
                 'snippet': 'div.s span.st::text',
-                'title': 'h3.r > a:first-of-type::text',
+                'title': 'h3.r a:first-of-type::text',
                 'visible_link': 'cite::text',
                 'rating': 'div.f.slp::text',
                 'sitelinks': 'div.osl::text'
@@ -41,15 +41,15 @@ class GoogleParser(Parser):
             'de_ip': {
                 'container': '#center_col',
                 'result_container': 'li.g ',
-                'link': 'h3.r > a:first-of-type::attr(href)',
+                'link': 'h3.r a:first-of-type::attr(href)',
                 'snippet': 'div.s span.st::text',
-                'title': 'h3.r > a:first-of-type::text',
+                'title': 'h3.r a:first-of-type::text',
                 'visible_link': 'cite::text',
                 'rating': 'div.f.slp::text',
                 'sitelinks': 'div.osl::text'
             },
         },
-        'tweets_searched': {
+        'tweets': {
             'us_ip_tweets_items': {
                 'container': 'g-inner-card._dCh._KBh',
                 'link': 'g-inner-card g-link a::attr(href)',
@@ -57,7 +57,14 @@ class GoogleParser(Parser):
                 'title': 'g-inner-card div._Jvo::text',
                 'visible_link': 'g-inner-card a._Lgi::text',
                 'rating': 'div.osl a:first-of-type::text',
-                'sitelinks': 'div.osl::text'
+            },
+        },
+        'maps_places': {
+            'us_ip_maps_places': {
+                'container': 'a > div._iPk._Ml',
+                'snippet': 'span',
+                'title': 'div._rl::text',
+                'link': 'NotImplemented',
             },
         },
         'news': {

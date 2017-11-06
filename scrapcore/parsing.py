@@ -55,7 +55,7 @@ class Parsing():
             serp.set_values_from_parser(parser)
         if scraper:
             serp.set_values_from_scraper(scraper)
-        serp.latitude = search_instance['latitude']
-        serp.longitude = search_instance['longitude']
+        serp.latitude = search_instance.get('latitude')
+        serp.longitude = search_instance.get('longitude')
 
         return serp
