@@ -718,8 +718,6 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 )
                 time.sleep(1)
                 self.webdriver.refresh()
-                # this sleep is just for human testing...
-                time.sleep(10)
             try:
                 if self.config.get('screenshot') is True:
                     self._save_debug_screenshot()
