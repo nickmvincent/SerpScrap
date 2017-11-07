@@ -67,6 +67,14 @@ class GoogleParser(Parser):
                 'link': 'NotImplemented',
             },
         },
+        'maps_locations': {
+            'us_ip_maps_locations': {
+                'container': 'a > div[class=_iPk]',
+                'snippet': 'span',
+                'title': 'div._rl::text',
+                'link': 'NotImplemented',
+            },
+        },
         'news': {
             'de_ip_news_items': {
                 'container': 'g-inner-card[class=_KBh]',

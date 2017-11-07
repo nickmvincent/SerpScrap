@@ -68,6 +68,7 @@ class SearchEngineResultsPage(Base):
     requested_by = Column(String, default='127.0.0.1')
     latitude = Column(String)
     longitude = Column(String)
+    reported_location = Column(String)
 
 
     # string in SERP indicates how many results we got for the search term.

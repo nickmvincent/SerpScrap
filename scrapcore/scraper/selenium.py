@@ -343,7 +343,6 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             useragent = random_user_agent(
                 mobile=self.config.get('mobile_user_agent', False)
             )
-            print('USERAGENT: {}'.format(useragent))
             logger.info('useragent: {}'.format(useragent))
             dcap = dict(DesiredCapabilities.PHANTOMJS)
             dcap["phantomjs.page.settings.userAgent"] = useragent
@@ -686,7 +685,6 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 self.webdriver.execute_script(
                     """
                     window.navigator.geolocation.getCurrentPosition=function(success){
-                        console.log('getCurrentPositionCalled');
                         var position = {
                             "coords" : {
                                 "latitude": "%s",
@@ -697,9 +695,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                         success(position);
                     };
                     function geoSuccess(position) {
-                        console.log('geoSuccess');
                         console.log(window.navigator.geolocation);
-                        console.log(position.coords.latitude);
                     };
                     window.navigator.geolocation.getCurrentPosition(
                         geoSuccess
@@ -718,6 +714,14 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 )
                 time.sleep(1)
                 self.webdriver.refresh()
+                self.reported_location = self.webdriver.find_element_by_id("swml-loc").text
+                self.webdriver.execute_script(
+                    """
+                    console.log("%s");
+                    """ % (self.reported_location)
+                )
+                time.sleep(5)
+
             try:
                 if self.config.get('screenshot') is True:
                     self._save_debug_screenshot()

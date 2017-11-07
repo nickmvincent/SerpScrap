@@ -172,14 +172,16 @@ class Parser():
                     # Avoid duplicates. Detect them by the link.
                     # If statement below: Lazy evaluation.
                     # The more probable case first.
-                    if serp_result['rank'] == 1:
-                        print(serp_result)
+                    print(serp_result)
                     if 'link' in serp_result and serp_result['link'] and \
                             not [e for e in self.search_results[result_type]
                                  if e['link'] == serp_result['link']]:
                         self.search_results[result_type].append(serp_result)
                         self.num_results += 1
-                    elif result_type == 'knowledge_panel' or result_type == 'tweets' or result_type == 'maps_places':
+                    elif result_type  in [
+                        'knowledge_panel', 'tweets',
+                        'maps_places', 'maps_locations'
+                    ]:
                         self.search_results[result_type].append(serp_result)
                         self.num_results += 1
                     if 'keyword' in serp_result and serp_result['keyword']:

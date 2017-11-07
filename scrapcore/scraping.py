@@ -82,6 +82,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
 
         jobs = jobs or {}
         self.search_engine_name = search_engine['engine'].lower()
+        self.search_instance = search_engine
 
         assert self.search_engine_name, 'You need to specify an search_engine'
 
