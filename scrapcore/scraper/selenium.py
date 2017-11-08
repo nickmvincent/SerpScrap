@@ -727,6 +727,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                     self._save_debug_screenshot()
                     time.sleep(.5)
                 self.html = self.webdriver.execute_script('return document.body.innerHTML;')
+                self.outerHTML = "<!DOCTYPE html>\n" + self.webdriver.execute_script('return document.documentElement.outerHTML;')
             except (ConnectionError, ConnectionRefusedError, ConnectionResetError) as err:
                 logger.error(err)
             except WebDriverException:

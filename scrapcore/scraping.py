@@ -201,10 +201,17 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
                 query=self.query,
                 search_instance=self.search_instance
             )
-
             self.scraper_search.serps.append(serp)
             self.session.add(serp)
             self.session.commit()
+            identifier = "searched {} from {}".format(
+                serp.query, serp.reported_location
+            )
+            filename = self.config.get('database_name') + '_' + identifier + '.html'
+
+            print(filename)
+            with open(filename, 'wb') as f:
+                f.write(self.outerHTML.encode("utf-8"))
 
             ResultWriter().store_serp_result(serp, self.config)
 

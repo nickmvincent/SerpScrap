@@ -99,7 +99,7 @@ class GoogleParser(Parser):
                 'container': 'div.knowledge-panel',
                 'link': 'div.knowledge-panel div.mod span.ellip',
                 'snippet': 'div.knowledge-panel .kno-rdesc span',
-                'title': 'div.knowledge-panel div.kp-header span',
+                'title': 'div.knowledge-panel div.kno-ecr-pt span',
                 'visible_link': 'div.knowledge-panel div.mod span.ellip',
             },
         },
