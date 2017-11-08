@@ -173,18 +173,27 @@ class Parser():
                     # If statement below: Lazy evaluation.
                     # The more probable case first.
                     print(serp_result)
-                    if 'link' in serp_result and serp_result['link'] and \
+                    found_container = False
+                    for key in ['isTweetCarousel', 'isMapsPlaces', 'isMapsLocations', 'isNewsCarousel']:
+                        if serp_result.get(key):
+                            serp_result[key] = True
+                            found_container = True
+
+                    if (
+                        found_container
+                    ) or (
+                        'link' in serp_result and serp_result['link'] and
                             not [e for e in self.search_results[result_type]
-                                 if e['link'] == serp_result['link']]:
+                                 if e['link'] == serp_result['link']]
+                    ) or (
+                        result_type in [
+                            'knowledge_panel', 'tweets',
+                            'maps_places', 'maps_locations'
+                        ]
+                    ):
                         self.search_results[result_type].append(serp_result)
                         self.num_results += 1
-                    elif result_type  in [
-                        'knowledge_panel', 'tweets',
-                        'maps_places', 'maps_locations'
-                    ]:
-                        self.search_results[result_type].append(serp_result)
-                        self.num_results += 1
-                    if 'keyword' in serp_result and serp_result['keyword']:
+                    elif 'keyword' in serp_result and serp_result['keyword']:
                         self.related_keywords[result_type].append(serp_result)
 
 

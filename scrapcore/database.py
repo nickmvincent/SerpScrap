@@ -121,7 +121,11 @@ class SearchEngineResultsPage(Base):
                          'title',
                          'visible_link',
                          'rating',
-                         'sitelinks'
+                         'sitelinks',
+                         'isNewsCarousel',
+                         'isTweetCarousel',
+                         'isMapsLocations',
+                         'isMapsPlaces',
                       ) if key not in link]
 
                     Link(
@@ -134,7 +138,11 @@ class SearchEngineResultsPage(Base):
                         serp=self,
                         link_type=key,
                         rating=link['rating'],
-                        sitelinks=link['sitelinks']
+                        sitelinks=link['sitelinks'],
+                        isNewsCarousel=link['isNewsCarousel'],
+                        isTweetCarousel=link['isTweetCarousel'],
+                        isMapsLocations=link['isMapsLocations'],
+                        isMapsPlaces=link['isMapsPlaces'],
                     )
         for key, value in parser.related_keywords.items():
             if isinstance(value, list) and len(value) > 0:
@@ -186,6 +194,10 @@ class Link(Base):
     link_type = Column(String)
     rating = Column(String)
     sitelinks = Column(String)
+    isTweetCarousel = Column(Boolean)
+    isMapsPlaces = Column(Boolean)
+    isMapsLocations = Column(Boolean)
+    isNewsCarousel = Column(Boolean)
 
     serp_id = Column(Integer, ForeignKey('serp.id'))
     serp = relationship(
