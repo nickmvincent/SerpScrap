@@ -69,6 +69,7 @@ class SearchEngineResultsPage(Base):
     latitude = Column(String)
     longitude = Column(String)
     reported_location = Column(String)
+    is_control = Column(Boolean)
 
 
     # string in SERP indicates how many results we got for the search term.

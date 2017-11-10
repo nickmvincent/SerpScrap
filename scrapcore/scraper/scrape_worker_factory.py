@@ -22,9 +22,14 @@ class ScrapeWorkerFactory():
 
         self.jobs = dict()
 
-    def is_suitabe(self, job):
+    def is_suitable(self, job):
 
-        return job['scrape_method'] == self.mode and job['search_engine'] == self.search_instance['engine']
+        return (
+            job['scrape_method'] == self.mode and 
+            job['search_instance']['engine'] == self.search_instance['engine'] and
+            job['search_instance']['latitude'] == self.search_instance['latitude'] and
+            job['search_instance']['longitude'] == self.search_instance['longitude']
+        )
 
     def add_job(self, job):
 

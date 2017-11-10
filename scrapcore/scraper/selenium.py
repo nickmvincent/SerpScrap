@@ -145,7 +145,13 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             self.search_engine_name,
             self.scrape_method
         )
+        self.is_control_thread = False
         super().instance_creation_info(self.__class__.__name__)
+
+
+
+    def mark_as_control(self):
+        self.is_control_thread = True
 
     def set_proxy(self):
         """Install a proxy on the communication channel."""

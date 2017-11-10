@@ -172,7 +172,6 @@ class Parser():
                     # Avoid duplicates. Detect them by the link.
                     # If statement below: Lazy evaluation.
                     # The more probable case first.
-                    print(serp_result)
                     found_container = False
                     for key in ['isTweetCarousel', 'isMapsPlaces', 'isMapsLocations', 'isNewsCarousel']:
                         if serp_result.get(key):

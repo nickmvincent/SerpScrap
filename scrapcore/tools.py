@@ -61,7 +61,7 @@ class ScrapeJobGenerator():
                 for page in range(1, num_pages + 1):
                     yield {
                         'query': keyword,
-                        'search_engine': search_instance.get('engine'),
+                        'search_instance': search_instance,
                         'scrape_method': scrape_method,
                         'page_number': page
                     }
