@@ -38,7 +38,6 @@ class Core():
 
         proxy_file = config.get('proxy_file', '')
 
-        # when no search engine is specified, use google
         search_instances = config.get('search_instances', [{'engine':'google'}])
         if not isinstance(search_instances, list):
             raise ValueError('Please provide a list of search instance objects')
@@ -71,8 +70,6 @@ class Core():
             )
             scrape_jobs = list(scrape_jobs)
             control_jobs = list(control_jobs)
-            print('scrape_jobs', len(scrape_jobs), scrape_jobs)
-            print('control_jobs', len(control_jobs), control_jobs)
             proxies = []
 
             if config.get('use_own_ip'):
@@ -196,7 +193,6 @@ class Core():
                                 break
 
                 threads, control_threads = [], []
-                print(workers.qsize(), control_workers.qsize())
                 for (threadlist, workerq) in [
                     (threads, workers),
                     (control_threads, control_workers)
@@ -207,7 +203,6 @@ class Core():
                         if thread:
                             threadlist.append(thread)
 
-                print(len(threads), len(control_threads))
                 if len(threads) != len(control_threads):
                     q.put('done')
                     progress_thread.join()

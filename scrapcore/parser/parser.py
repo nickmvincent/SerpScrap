@@ -173,7 +173,7 @@ class Parser():
                     # If statement below: Lazy evaluation.
                     # The more probable case first.
                     found_container = False
-                    for key in ['isTweetCarousel', 'isMapsPlaces', 'isMapsLocations', 'isNewsCarousel']:
+                    for key in ['isTweetCarousel', 'isMapsPlaces', 'isMapsLocations', 'isNewsCarousel', ]:
                         if serp_result.get(key):
                             serp_result[key] = True
                             found_container = True

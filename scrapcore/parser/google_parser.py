@@ -8,10 +8,10 @@ from scrapcore.parser.parser import Parser
 
 logger = logging.getLogger(__name__)
 
-TWEET_SELECTOR = 'g-inner-card._dCh._KBh'
+TWEET_SELECTOR = 'div._nip'
 MAPS_PLACES_SELECTOR = 'a > div._iPk._Ml'
 MAPS_LOCATIONS_SELECTOR = 'a > div[class=_iPk]'
-NEWS_SELECTOR = 'g-inner-card[class=_KBh]'
+NEWS_SELECTOR = 'div._Ocr'
 
 
 class GoogleParser(Parser):
@@ -123,22 +123,34 @@ class GoogleParser(Parser):
                 'sitelinks': 'div._zHp > div::text'
             },
         },
-        'ads_main': {
+        'top_ads': {
+            # 'doesnt_work': {
+            #     'container': '#center_col',
+            #     'result_container': 'li.ads-ad',
+            #     'link': 'h3.r > a:first-of-type::attr(href)',
+            #     'snippet': 'div.s span.st::text',
+            #     'title': 'h3.r > a:first-of-type::text',
+            #     'visible_link': '.ads-visurl cite::text',
+            #     'rating': 'div._Ond _Bu span::text',
+            #     'sitelinks': 'div.osl::text'
+            # },
             'us_ip': {
                 'container': '#center_col',
-                'result_container': 'li.ads-ad',
-                'link': 'h3.r > a:first-of-type::attr(href)',
-                'snippet': 'div.s span.st::text',
-                'title': 'h3.r > a:first-of-type::text',
+                'result_container': 'div#tads li.ads-ad',
+                'link': 'h3 > a:nth-child(2)::attr(href)',
+                'snippet': 'div.ads-creative::text',
+                'title': 'h3 > a:nth-child(2)::text',
                 'visible_link': '.ads-visurl cite::text',
                 'rating': 'div._Ond _Bu span::text',
-                'sitelinks': 'div.osl::text'
-            },
-            'de_ip': {
+                'sitelinks': 'ul._wEo::text'
+            }
+        },
+        'bottom_ads': {
+            'us_ip': {
                 'container': '#center_col',
-                'result_container': '.ads-ad',
+                'result_container': 'div#bottomads li.ads-ad',
                 'link': 'h3 > a:nth-child(2)::attr(href)',
-                'snippet': '.ads-creative::text',
+                'snippet': 'div.ads-creative::text',
                 'title': 'h3 > a:nth-child(2)::text',
                 'visible_link': '.ads-visurl cite::text',
                 'rating': 'div._Ond _Bu span::text',
