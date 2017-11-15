@@ -17,6 +17,7 @@ from scrapcore.tools import ScrapeJobGenerator
 from scrapcore.tools import ShowProgressQueue
 from scrapcore.validator_config import ValidatorConfig
 
+USE_CONTROL = False
 
 class Core():
 
@@ -62,13 +63,17 @@ class Core():
                 scrape_method,
                 pages
             )
-            control_jobs = ScrapeJobGenerator().get(
-                keywords,
-                [search_instances[0] for _ in search_instances],
-                scrape_method,
-                pages
-            )
+            
             scrape_jobs = list(scrape_jobs)
+            if USE_CONTROL:
+                control_jobs = ScrapeJobGenerator().get(
+                    keywords,
+                    [search_instances[0] for _ in search_instances],
+                    scrape_method,
+                    pages
+                )
+            else:
+                control_jobs = []
             control_jobs = list(control_jobs)
             proxies = []
 
@@ -159,22 +164,23 @@ class Core():
                                     browser_num=num_worker
                                 )
                             )
-                            control_workers.put(
-                                ScrapeWorkerFactory(
-                                    config,
-                                    cache_manager=cache_manager,
-                                    mode=method,
-                                    proxy=proxy,
-                                    search_instance=search_instances[0],
-                                    session=session,
-                                    db_lock=db_lock,
-                                    cache_lock=cache_lock,
-                                    scraper_search=scraper_search,
-                                    captcha_lock=captcha_lock,
-                                    progress_queue=q,
-                                    browser_num=num_worker
+                            if USE_CONTROL:
+                                control_workers.put(
+                                    ScrapeWorkerFactory(
+                                        config,
+                                        cache_manager=cache_manager,
+                                        mode=method,
+                                        proxy=proxy,
+                                        search_instance=search_instances[0],
+                                        session=session,
+                                        db_lock=db_lock,
+                                        cache_lock=cache_lock,
+                                        scraper_search=scraper_search,
+                                        captcha_lock=captcha_lock,
+                                        progress_queue=q,
+                                        browser_num=num_worker
+                                    )
                                 )
-                            )
 
                 
 
@@ -203,17 +209,22 @@ class Core():
                         if thread:
                             threadlist.append(thread)
 
-                if len(threads) != len(control_threads):
+                if len(threads) != len(control_threads) and USE_CONTROL:
                     q.put('done')
                     progress_thread.join()
                     raise ValueError("Something went wrong allocating threads, check your configuration")
-                for thread, control_thread in zip(threads, control_threads):
-                    thread.start()
-                    control_thread.mark_as_control()
-                    control_thread.start()
-                    print('Started a thread and corresponding control thread, now sleeping 120 seconds...')
-                    time.sleep(120)
 
+                if USE_CONTROL:
+                    for thread, control_thread in zip(threads, control_threads):
+                        thread.start()
+                        control_thread.mark_as_control()
+                        control_thread.start()
+                        print('Sleeping 120 sec')
+                        time.sleep(120)
+                else:
+                    for thread in threads:
+                        thread.start()
+        
                 for thread in threads:
                     thread.join()
                 for thread in control_threads:
@@ -232,6 +243,8 @@ class Core():
             except Exception:
                 pass
             scraper_searches.append(scraper_search)
+            print('Finished with the keyword {}'.format(str(keywords)))
+            time.sleep(60 * 20)
 
         if return_results:
             return scraper_searches
