@@ -8,10 +8,8 @@ from scrapcore.parser.parser import Parser
 
 logger = logging.getLogger(__name__)
 
-TWEET_SELECTOR = 'div._nip'
 MAPS_PLACES_SELECTOR = 'a > div._iPk._Ml'
 MAPS_LOCATIONS_SELECTOR = 'a > div[class=_iPk]'
-NEWS_SELECTOR = 'div._Ocr'
 
 
 class GoogleParser(Parser):
@@ -35,22 +33,22 @@ class GoogleParser(Parser):
         'results': {
             'us_ip': {
                 'container': '#center_col',
-                'result_container': 'div._NId > div > div',
+                'result_container': 'div._NId > div > *',
                 'link': 'h3.r a:first-of-type::attr(href)',
                 'snippet': 'div.s span.st::text',
                 'title': 'h3.r a:first-of-type::text',
                 'visible_link': 'cite::text',
                 'rating': 'div.f.slp::text',
                 'sitelinks': 'div.osl::text',
-                'isTweetCarousel': TWEET_SELECTOR,
+                'isTweetCarousel': 'div._nip',
                 'isMapsPlaces': MAPS_PLACES_SELECTOR,
                 'isMapsLocations': MAPS_LOCATIONS_SELECTOR,
-                'isNewsCarousel': NEWS_SELECTOR,
+                'isNewsCarousel': 'div._Ocr',
             },
         },
         'tweets': {
             'us_ip_tweets_items': {
-                'container': TWEET_SELECTOR,
+                'container': 'g-inner-card._dCh._KBh',
                 'link': 'g-inner-card g-link a::attr(href)',
                 'snippet': 'g-inner-card::text',
                 'title': 'g-inner-card div._Jvo::text',
@@ -76,7 +74,7 @@ class GoogleParser(Parser):
         },
         'news': {
             'us_ip_news_items': {
-                'container': NEWS_SELECTOR,
+                'container': 'g-inner-card[class=_KBh]',
                 'link': 'g-inner-card a::attr(href)',
                 'snippet': 'g-inner-card::text',
                 'title': 'g-inner-card div._Jvo::text',
