@@ -70,6 +70,7 @@ class SearchEngineResultsPage(Base):
     longitude = Column(String)
     reported_location = Column(String)
     is_control = Column(Boolean)
+    urban_rural_code = Column(Integer)
 
 
     # string in SERP indicates how many results we got for the search term.

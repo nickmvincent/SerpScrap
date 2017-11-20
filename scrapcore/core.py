@@ -17,7 +17,7 @@ from scrapcore.tools import ScrapeJobGenerator
 from scrapcore.tools import ShowProgressQueue
 from scrapcore.validator_config import ValidatorConfig
 
-USE_CONTROL = False
+USE_CONTROL = True
 
 class Core():
 
@@ -51,7 +51,7 @@ class Core():
 
         all_keywords = set(config.get('keywords', []))
         scraper_searches = []
-        for keywords in all_keywords:
+        for index, keywords in enumerate(all_keywords):
             keywords = [keywords]
             result_writer = ResultWriter()
             result_writer.init_outfile(config, force_reload=True)
@@ -63,12 +63,12 @@ class Core():
                 scrape_method,
                 pages
             )
-            
             scrape_jobs = list(scrape_jobs)
+            
             if USE_CONTROL:
                 control_jobs = ScrapeJobGenerator().get(
                     keywords,
-                    [search_instances[0] for _ in search_instances],
+                    search_instances,
                     scrape_method,
                     pages
                 )
@@ -171,7 +171,7 @@ class Core():
                                         cache_manager=cache_manager,
                                         mode=method,
                                         proxy=proxy,
-                                        search_instance=search_instances[0],
+                                        search_instance=search_instance,
                                         session=session,
                                         db_lock=db_lock,
                                         cache_lock=cache_lock,
@@ -219,8 +219,6 @@ class Core():
                         thread.start()
                         control_thread.mark_as_control()
                         control_thread.start()
-                        print('Sleeping 120 sec')
-                        time.sleep(120)
                 else:
                     for thread in threads:
                         thread.start()
@@ -244,7 +242,10 @@ class Core():
                 pass
             scraper_searches.append(scraper_search)
             print('Finished with the keyword {}'.format(str(keywords)))
-            time.sleep(60 * 20)
+            if index != len(all_keywords) - 1:
+                sleep_mins = len(threads) + len(control_threads)
+                print('Going to sleep 1 minute per query made, for a total of {} minutes'.format(sleep_mins))
+                time.sleep(60 * sleep_mins)
 
         if return_results:
             return scraper_searches
