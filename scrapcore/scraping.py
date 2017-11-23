@@ -202,6 +202,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
                 search_instance=self.search_instance
             )
             serp.is_control = self.is_control_thread
+            serp.category = self.category
             self.scraper_search.serps.append(serp)
             self.session.add(serp)
             self.session.commit()

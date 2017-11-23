@@ -1,3 +1,4 @@
+"""runs serpscrap"""
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import datetime
@@ -20,7 +21,7 @@ from scrapcore.validator_config import ValidatorConfig
 USE_CONTROL = True
 
 class Core():
-
+    """The core object runs all other code"""
     logger = None
 
     def run(self, config):
@@ -49,10 +50,12 @@ class Core():
         pages = int(config.get('num_pages_for_keyword', 1))
         method = config.get('scrape_method', 'selenium')
 
-        all_keywords = set(config.get('keywords', []))
+        all_keyword_objs = set(config.get('keywords', []))
         scraper_searches = []
-        for index, keywords in enumerate(all_keywords):
-            keywords = [keywords]
+        for index, keyword_obj in enumerate(all_keyword_objs):
+            keywords = [keyword_obj['keyword']]
+            category = keyword_obj['category']
+
             result_writer = ResultWriter()
             result_writer.init_outfile(config, force_reload=True)
             cache_manager = CacheManager(config, self.logger, result_writer)
@@ -64,7 +67,7 @@ class Core():
                 pages
             )
             scrape_jobs = list(scrape_jobs)
-            
+
             if USE_CONTROL:
                 control_jobs = ScrapeJobGenerator().get(
                     keywords,
@@ -125,13 +128,15 @@ class Core():
                 # used in selenium instances.
                 captcha_lock = threading.Lock()
 
-                self.logger.info('''
+                self.logger.info(
+                    '''
                     Going to scrape {num_keywords} keywords with {num_proxies}
-                    proxies by using {num_threads} threads.'''.format(
-                    num_keywords=len(scrape_jobs),
-                    num_proxies=len(proxies),
-                    num_threads=num_search_instances)
-                )
+                    proxies by using {num_threads} threads.
+                    '''.format(
+                        num_keywords=len(scrape_jobs),
+                        num_proxies=len(proxies),
+                        num_threads=num_search_instances)
+                    )
 
                 progress_thread = None
 
@@ -144,7 +149,7 @@ class Core():
                 control_workers = queue.Queue()
                 num_worker = 0
 
-                for index, search_instance in enumerate(search_instances):
+                for _, search_instance in enumerate(search_instances):
                     for proxy in proxies:
                         for worker in range(num_workers):
                             num_worker += 1
@@ -182,13 +187,11 @@ class Core():
                                     )
                                 )
 
-                
-
                 # here we look for suitable workers
                 # for all jobs created.
                 for (joblist, workerq) in [
-                    (scrape_jobs, workers),
-                    (control_jobs, control_workers)
+                        (scrape_jobs, workers),
+                        (control_jobs, control_workers)
                 ]:
                     for job in joblist:
                         while True:
@@ -200,8 +203,8 @@ class Core():
 
                 threads, control_threads = [], []
                 for (threadlist, workerq) in [
-                    (threads, workers),
-                    (control_threads, control_workers)
+                        (threads, workers),
+                        (control_threads, control_workers)
                 ]:
                     while not workerq.empty():
                         worker = workerq.get()
@@ -212,17 +215,18 @@ class Core():
                 if len(threads) != len(control_threads) and USE_CONTROL:
                     q.put('done')
                     progress_thread.join()
-                    raise ValueError("Something went wrong allocating threads, check your configuration")
+                    raise ValueError("Something went wrong w/ threads, check config")
 
                 if USE_CONTROL:
                     for thread, control_thread in zip(threads, control_threads):
                         thread.start()
+                        thread.mark_category(category)
                         control_thread.mark_as_control()
                         control_thread.start()
+                        control_thread.mark_category(category)
                 else:
                     for thread in threads:
                         thread.start()
-        
                 for thread in threads:
                     thread.join()
                 for thread in control_threads:
@@ -238,13 +242,17 @@ class Core():
             try:
                 session.add(scraper_search)
                 session.commit()
-            except Exception:
-                pass
+            except Exception as err:
+                print(err)
             scraper_searches.append(scraper_search)
             print('Finished with the keyword {}'.format(str(keywords)))
-            if index != len(all_keywords) - 1:
+            if index != len(all_keyword_objs) - 1:
                 sleep_mins = len(threads) + len(control_threads)
-                print('Going to sleep 1 minute per query made, for a total of {} minutes'.format(sleep_mins))
+                print(
+                    """
+                    Going to sleep 1 minute per query made, for a total of {} minutes
+                    """.format(sleep_mins)
+                )
                 time.sleep(60 * sleep_mins)
 
         if return_results:

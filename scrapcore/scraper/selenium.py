@@ -153,6 +153,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
     def mark_as_control(self):
         self.is_control_thread = True
 
+    def mark_category(self, category):
+        self.category = category
+
     def set_proxy(self):
         """Install a proxy on the communication channel."""
 

@@ -70,6 +70,7 @@ class SearchEngineResultsPage(Base):
     longitude = Column(String)
     reported_location = Column(String)
     is_control = Column(Boolean)
+    category = Column(String)
     urban_rural_code = Column(Integer)
 
 

@@ -138,43 +138,44 @@ class SerpScrap():
         Returns
             list: dict of scrape results
         """
-        searches = self.scrap()
-        self.results = []
-        if searches is not None:
-            for search in searches:
-                for serp in search.serps:
-                    self.related = []
-                    for related_keyword in serp.related_keywords:
-                        self.related.append({
-                            'keyword': related_keyword.keyword,
-                            'rank': related_keyword.rank
-                        })
-                    for link in serp.links:
-                        self.results.append({
-                            'query_num_results total': serp.num_results_for_query,
-                            'query_num_results_page': serp.num_results,
-                            'query_page_number': serp.page_number,
-                            'query': serp.query,
-                            'serp_rank': link.rank,
-                            'serp_type': link.link_type,
-                            'serp_url': link.link,
-                            'serp_rating': link.rating,
-                            'serp_title': link.title,
-                            'serp_domain': link.domain,
-                            'serp_visible_link': link.visible_link,
-                            'serp_snippet': link.snippet,
-                            'serp_sitelinks': link.sitelinks,
-                            'screenshot': os.path.join('{}/{}/{}_{}-p{}.png'.format(
-                                self.config['dir_screenshot'],
-                                self.config['today'],
-                                'google',
-                                serp.query,
-                                str(serp.page_number),
-                            ))
-                        })
-            return self.results
-        else:
-            raise Exception('No Results')
+        self.scrap()
+        # searches = self.scrap()
+        # self.results = []
+        # if searches is not None:
+        #     for search in searches:
+        #         for serp in search.serps:
+        #             self.related = []
+        #             for related_keyword in serp.related_keywords:
+        #                 self.related.append({
+        #                     'keyword': related_keyword.keyword,
+        #                     'rank': related_keyword.rank
+        #                 })
+        #             for link in serp.links:
+        #                 self.results.append({
+        #                     'query_num_results total': serp.num_results_for_query,
+        #                     'query_num_results_page': serp.num_results,
+        #                     'query_page_number': serp.page_number,
+        #                     'query': serp.query,
+        #                     'serp_rank': link.rank,
+        #                     'serp_type': link.link_type,
+        #                     'serp_url': link.link,
+        #                     'serp_rating': link.rating,
+        #                     'serp_title': link.title,
+        #                     'serp_domain': link.domain,
+        #                     'serp_visible_link': link.visible_link,
+        #                     'serp_snippet': link.snippet,
+        #                     'serp_sitelinks': link.sitelinks,
+        #                     'screenshot': os.path.join('{}/{}/{}_{}-p{}.png'.format(
+        #                         self.config['dir_screenshot'],
+        #                         self.config['today'],
+        #                         'google',
+        #                         serp.query,
+        #                         str(serp.page_number),
+        #                     ))
+        #                 })
+        #     return self.results
+        # else:
+        #     raise Exception('No Results')
 
     def scrap(self):
         """scrap, method calls GoogleScraper method
