@@ -50,7 +50,7 @@ class Core():
         pages = int(config.get('num_pages_for_keyword', 1))
         method = config.get('scrape_method', 'selenium')
 
-        all_keyword_objs = set(config.get('keywords', []))
+        all_keyword_objs = config.get('keywords', [])
         scraper_searches = []
         for index, keyword_obj in enumerate(all_keyword_objs):
             keywords = [keyword_obj['keyword']]
