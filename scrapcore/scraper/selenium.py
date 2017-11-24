@@ -723,6 +723,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 )
                 time.sleep(1)
                 self.webdriver.refresh()
+                time.sleep(1)
                 self.reported_location = self.webdriver.find_element_by_id("swml-loc").text
                 self.webdriver.execute_script(
                     """
