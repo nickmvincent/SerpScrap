@@ -18,11 +18,11 @@ from scrapcore.tools import ScrapeJobGenerator
 from scrapcore.tools import ShowProgressQueue
 from scrapcore.validator_config import ValidatorConfig
 
-USE_CONTROL = True
 
 class Core():
     """The core object runs all other code"""
     logger = None
+    
 
     def run(self, config):
         """run with the dict in config."""
@@ -34,10 +34,10 @@ class Core():
     def main(self, return_results=False, config=None):
         """the main method"""
 
+        use_control = config.get('use_control')
         logger = Logger()
         logger.setup_logger(level=config.get('log_level').upper())
         self.logger = logger.get_logger()
-
         proxy_file = config.get('proxy_file', '')
 
         search_instances = config.get('search_instances', [{'engine':'google'}])
@@ -53,7 +53,8 @@ class Core():
         all_keyword_objs = config.get('keywords', [])
         scraper_searches = []
         for index, keyword_obj in enumerate(all_keyword_objs):
-            keywords = [keyword_obj['keyword']]
+            # old code treated keywords as a LIST when passing to ScrapeJobGenerator, etc
+            single_keyword_as_list = [keyword_obj['keyword']]
             category = keyword_obj['category']
 
             result_writer = ResultWriter()
@@ -61,16 +62,16 @@ class Core():
             cache_manager = CacheManager(config, self.logger, result_writer)
 
             scrape_jobs = ScrapeJobGenerator().get(
-                keywords,
+                single_keyword_as_list,
                 search_instances,
                 scrape_method,
                 pages
             )
             scrape_jobs = list(scrape_jobs)
 
-            if USE_CONTROL:
+            if use_control:
                 control_jobs = ScrapeJobGenerator().get(
-                    keywords,
+                    single_keyword_as_list,
                     search_instances,
                     scrape_method,
                     pages
@@ -102,7 +103,7 @@ class Core():
             scraper_search = ScraperSearch(
                 number_search_instances_used=num_search_instances,
                 number_proxies_used=len(proxies),
-                number_search_queries=len(keywords),
+                number_search_queries=len(single_keyword_as_list),
                 started_searching=datetime.datetime.utcnow(),
                 used_search_instances=','.join(
                     [instance['engine'] for instance in search_instances]
@@ -130,7 +131,7 @@ class Core():
 
                 self.logger.info(
                     '''
-                    Going to scrape {num_keywords} keywords with {num_proxies}
+                    Going to scrape {num_keywords} single_keyword_as_list with {num_proxies}
                     proxies by using {num_threads} threads.
                     '''.format(
                         num_keywords=len(scrape_jobs),
@@ -169,7 +170,7 @@ class Core():
                                     browser_num=num_worker
                                 )
                             )
-                            if USE_CONTROL:
+                            if use_control:
                                 control_workers.put(
                                     ScrapeWorkerFactory(
                                         config,
@@ -212,12 +213,12 @@ class Core():
                         if thread:
                             threadlist.append(thread)
 
-                if len(threads) != len(control_threads) and USE_CONTROL:
+                if len(threads) != len(control_threads) and use_control:
                     q.put('done')
                     progress_thread.join()
                     raise ValueError("Something went wrong w/ threads, check config")
 
-                if USE_CONTROL:
+                if use_control:
                     for thread, control_thread in zip(threads, control_threads):
                         thread.start()
                         thread.mark_category(category)
@@ -245,7 +246,7 @@ class Core():
             except Exception as err:
                 print(err)
             scraper_searches.append(scraper_search)
-            print('Finished with the keyword {}'.format(str(keywords)))
+            print('Finished with the keyword {}'.format(str(single_keyword_as_list)))
             if index != len(all_keyword_objs) - 1:
                 sleep_mins = len(threads) + len(control_threads)
                 print(

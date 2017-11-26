@@ -167,7 +167,6 @@ class Parser():
                     for key, selector in selectors_to_use.items():
                         serp_result[key] = self.advanced_css(selector, result)
 
-                    serp_result['rank'] = index + 1
                     # only add items that have not None links.
                     # Avoid duplicates. Detect them by the link.
                     # If statement below: Lazy evaluation.
@@ -190,9 +189,11 @@ class Parser():
                             'maps_places', 'maps_locations'
                         ]
                     ):
+                        serp_result['rank'] = index + 1                    
                         self.search_results[result_type].append(serp_result)
                         self.num_results += 1
                     elif 'keyword' in serp_result and serp_result['keyword']:
+                        serp_result['rank'] = index + 1                        
                         self.related_keywords[result_type].append(serp_result)
 
 

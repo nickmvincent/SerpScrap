@@ -1,0 +1,19 @@
+This text document is meant to log weird behavior I had to work around.
+
+
+11/26/2017
+
+We were using the CSS selector "div._NId > div > *" to get all the "results" item type (normal links and carousels)
+
+But in the query "Pizza Hut", there is a <link rel="prerender"> Immediately after the div._NId > div
+
+i.e. div._NId > div > link
+instead of 
+div._NId > div > div > link
+
+So this matches as a result and messes up the rankings
+Since this is a not a valid result (does not have child link), it isn't saved, but it causes the rank to be incremented erroneously
+
+Proposed solution: only incremented serp['rank] AFTER confirming it is a valid result!
+
+This makes sense to me...
