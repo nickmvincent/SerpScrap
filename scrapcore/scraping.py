@@ -211,9 +211,10 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
             )
             filename = self.config.get('database_name') + '_' + identifier + '.html'
 
-            print(filename)
-            with open(filename, 'wb') as f:
-                f.write(self.outerHTML.encode("utf-8"))
+            if self.config.get('save_html'):
+                print('saving html to ', filename)
+                with open(filename, 'wb') as f:
+                    f.write(self.outerHTML.encode("utf-8"))
 
             ResultWriter().store_serp_result(serp, self.config)
 
