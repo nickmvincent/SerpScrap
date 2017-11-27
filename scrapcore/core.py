@@ -228,6 +228,7 @@ class Core():
                 else:
                     for thread in threads:
                         thread.start()
+                        time.sleep(1)
                         thread.mark_category(category)
                 for thread in threads:
                     thread.join()
