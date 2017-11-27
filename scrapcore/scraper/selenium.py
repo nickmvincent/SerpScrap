@@ -149,7 +149,6 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         super().instance_creation_info(self.__class__.__name__)
 
 
-
     def mark_as_control(self):
         self.is_control_thread = True
 
@@ -226,7 +225,6 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             logger.error(err)
 
     def _set_xvfb_display(self):
-        # TODO: should we check the format of the config?
         if self.xvfb_display:
             os.environ['DISPLAY'] = self.xvfb_display
 
@@ -260,25 +258,21 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                         self.proxy.port
                     )
                 )
-                self.webdriver = webdriver.Chrome(
-                    executable_path=self.config['executable_path'],
-                    chrome_options=chrome_ops
-                )
 
             chrome_ops.add_argument('--no-sandbox')
             chrome_ops.add_argument('--start-maximized')
-            # chrome_ops.add_argument(
-            #     '--window-position={},{}'.format(
-            #         randint(10, 30),
-            #         randint(10, 30)
-            #     )
-            # )
-            # chrome_ops.add_argument(
-            #     '--window-size={},{}'.format(
-            #         randint(800, 1024),
-            #         randint(600, 900)
-            #     )
-            # )
+            chrome_ops.add_argument(
+                '--window-position={},{}'.format(
+                    randint(10, 30),
+                    randint(10, 30)
+                )
+            )
+            chrome_ops.add_argument(
+                '--window-size={},{}'.format(
+                    randint(800, 1024),
+                    randint(600, 900)
+                )
+            )
             self.webdriver = webdriver.Chrome(
                 executable_path=self.config['executable_path'],
                 chrome_options=chrome_ops
