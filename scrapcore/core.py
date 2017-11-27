@@ -228,6 +228,7 @@ class Core():
                 else:
                     for thread in threads:
                         thread.start()
+                        thread.mark_category(category)
                 for thread in threads:
                     thread.join()
                 for thread in control_threads:
