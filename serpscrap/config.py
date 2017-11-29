@@ -21,7 +21,7 @@ class Config():
     config = {
         'use_own_ip': True,
         'search_instances': [{'engine': 'google'}],
-        'num_pages_for_keyword': 2,
+        'num_pages_for_keyword': 1,
         'scrape_method': 'selenium',
         'sel_browser': 'phantomjs',
         'executable_path': '',
@@ -40,7 +40,7 @@ class Config():
         'num_workers': 1,
         'num_results_per_page': 10,
         'sleeping_min': 5,
-        'sleeping_max': 15,
+        'sleeping_max': 7,
         'search_type': 'normal',
         'google_search_url': 'https://www.google.com/search?',
         'bing_search_url': 'http://www.bing.com/search?',
