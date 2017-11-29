@@ -18,6 +18,8 @@ from scrapcore.tools import ScrapeJobGenerator
 from scrapcore.tools import ShowProgressQueue
 from scrapcore.validator_config import ValidatorConfig
 
+BETWEEN_THREADS = 5
+
 
 class Core():
     """The core object runs all other code"""
@@ -228,7 +230,7 @@ class Core():
                 else:
                     for thread in threads:
                         thread.start()
-                        time.sleep(2)
+                        time.sleep(BETWEEN_THREADS)
                         thread.mark_category(category)
                 for thread in threads:
                     thread.join()
@@ -256,7 +258,7 @@ class Core():
                     Going to sleep 1 minute per query made, for a total of {} minutes
                     """.format(sleep_mins)
                 )
-                time.sleep(60 * sleep_mins)
+                time.sleep( (60 - BETWEEN_THREADS) * sleep_mins)
 
         if return_results:
             return scraper_searches
