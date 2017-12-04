@@ -72,6 +72,9 @@ class SearchEngineResultsPage(Base):
     is_control = Column(Boolean)
     category = Column(String)
     urban_rural_code = Column(Integer)
+    median_income = Column(Integer)
+    percent_dem = Column(Integer)
+    
 
 
     # string in SERP indicates how many results we got for the search term.

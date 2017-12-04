@@ -57,7 +57,9 @@ class Parsing():
             serp.set_values_from_scraper(scraper)
         serp.latitude = search_instance.get('latitude')
         serp.longitude = search_instance.get('longitude')
-        serp.urban_rural_code = search_instance.get('code')
+        serp.urban_rural_code = search_instance.get('urban_rural_code')
+        serp.median_income = search_instance.get('median_income')
+        serp.percent_dem = search_instance.get('percent_dem')
         serp.reported_location = scraper.reported_location
 
         return serp
