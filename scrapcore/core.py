@@ -244,11 +244,8 @@ class Core():
             result_writer.close_outfile()
 
             scraper_search.stopped_searching = datetime.datetime.utcnow()
-            try:
-                session.add(scraper_search)
-                session.commit()
-            except Exception as err:
-                print(err)
+            session.add(scraper_search)
+            session.commit()
             scraper_searches.append(scraper_search)
             print('Finished with the keyword {}'.format(str(single_keyword_as_list)))
             if index != len(all_keyword_objs) - 1:
