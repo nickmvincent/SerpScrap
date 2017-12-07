@@ -95,10 +95,10 @@ class GoogleParser(Parser):
         'knowledge_panel': {
             'us_ip_kp': {
                 'container': 'div.knowledge-panel',
-                'link': 'div.knowledge-panel div.mod span.ellip',
+                'sitelinks': 'div.knowledge-panel div.mod span.ellip',
+                'link': 'div.knowledge-panel a.q::attr(href)',
                 'snippet': 'div.knowledge-panel .kno-rdesc span',
                 'title': 'div.knowledge-panel div.kno-ecr-pt span',
-                'visible_link': 'div.knowledge-panel div.mod span.ellip',
             },
         },
         'shopping': {
