@@ -631,9 +631,10 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             try:
                 self.search_input.clear()
             except Exception as e:
-                logger.error('Possible blocked search, sleep 30 sec, Scrape Exception: ' + str(e))
-                self._save_debug_screenshot()
-                time.sleep(30)
+                raise ValueError('Got Blocked!')
+                # logger.error('Possible blocked search, sleep 30 sec, Scrape Exception: ' + str(e))
+                # self._save_debug_screenshot()
+                # time.sleep(30)
             time.sleep(.25)
 
             self.search_param_fields = self._get_search_param_fields()
