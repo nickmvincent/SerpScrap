@@ -79,18 +79,23 @@ class GoogleParser(Parser):
                 'snippet': 'g-inner-card::text',
                 'title': 'g-inner-card div._Jvo::text',
                 'visible_link': 'g-inner-card cite::text',
-                'rating': 'div.osl a:first-of-type::text',
-                'sitelinks': 'div.osl::text'
             },
-            'de_ip_othernews_items': {
-                'container': 'li.card-section',
-                'link': 'a._Dk::attr(href)',
-                'snippet': 'span._dwd::text',
-                'title': 'a._Dk::text',
-                'visible_link': 'cite::text',
-                'rating': 'div.osl a:first-of-type::text',
-                'sitelinks': 'div.osl::text'
-            },
+            # 'us_ip_news_no_image_items': {
+            #     'container': 'g-inner-card[class=_KBh]',
+            #     'link': 'g-inner-card > div > g-card-section > a::attr(href)',
+            #     'title': 'g-inner-card > div > g-card-section > a > div._eNq > span::text',
+            #     'visible_link': 'g-inner-card > div > g-card-section > div._INq::text',
+            #     'snippet:': 'g-card-section::text'
+            # },
+            # 'de_ip_othernews_items': {
+            #     'container': 'li.card-section',
+            #     'link': 'a._Dk::attr(href)',
+            #     'snippet': 'span._dwd::text',
+            #     'title': 'a._Dk::text',
+            #     'visible_link': 'cite::text',
+            #     'rating': 'div.osl a:first-of-type::text',
+            #     'sitelinks': 'div.osl::text'
+            # },
         },
         'knowledge_panel': {
             'us_ip_kp': {

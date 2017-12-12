@@ -200,6 +200,7 @@ class Link(Base):
     link_type = Column(String)
     rating = Column(String)
     sitelinks = Column(String)
+    misc = Column(String)
     isTweetCarousel = Column(Boolean)
     isMapsPlaces = Column(Boolean)
     isMapsLocations = Column(Boolean)

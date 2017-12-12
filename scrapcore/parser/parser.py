@@ -159,6 +159,10 @@ class Parser():
                 to_extract = set(selectors.keys()) - {'container', 'result_container'}
                 selectors_to_use = {key: selectors[key] for key in to_extract if key in selectors.keys()}
 
+                # if you skip an item for a real reason (e.g. prerender links)
+                # then increment num_rightfully_skipped to avoid messing up rank calcs
+                num_rightfully_skipped = 0
+
                 for index, result in enumerate(results):
                     # Let's add primitive support for CSS3 pseudo selectors
                     serp_result = {}
@@ -166,12 +170,19 @@ class Parser():
                     # selector is the selector to grab these items
                     for key, selector in selectors_to_use.items():
                         serp_result[key] = self.advanced_css(selector, result)
+                    # skip prerender links
+                    has_prerender = self.advanced_css('link::attr(rel)', result)
+                    if has_prerender == 'prerender':
+                        num_rightfully_skipped += 1
+                        continue
+                        
 
                     # only add items that have not None links.
                     # Avoid duplicates. Detect them by the link.
                     # If statement below: Lazy evaluation.
                     # The more probable case first.
                     found_container = False
+                    serp_result['rank'] = index + 1 - num_rightfully_skipped
                     for key in ['isTweetCarousel', 'isMapsPlaces', 'isMapsLocations', 'isNewsCarousel', ]:
                         if serp_result.get(key):
                             serp_result[key] = True
@@ -186,15 +197,19 @@ class Parser():
                     ) or (
                         result_type in [
                             'knowledge_panel', 'tweets',
-                            'maps_places', 'maps_locations'
+                            'maps_places', 'maps_locations',
                         ]
                     ):
-                        serp_result['rank'] = index + 1                    
                         self.search_results[result_type].append(serp_result)
                         self.num_results += 1
                     elif 'keyword' in serp_result and serp_result['keyword']:
-                        serp_result['rank'] = index + 1                        
                         self.related_keywords[result_type].append(serp_result)
+                    else:
+                        all_text = self.advanced_css('*::text', result)
+                        print(all_text)
+                        serp_result['misc'] = all_text
+                        self.search_results[result_type].append(serp_result)
+
 
 
     def advanced_css(self, selector, element):
@@ -252,9 +267,7 @@ class Parser():
                         return match
                 except IndexError:
                     pass
-
         return False
-
     def after_parsing(self):
         """Subclass specific behaviour after parsing happened.
 
