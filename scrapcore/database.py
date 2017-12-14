@@ -132,6 +132,8 @@ class SearchEngineResultsPage(Base):
                          'isTweetCarousel',
                          'isMapsLocations',
                          'isMapsPlaces',
+                         'isKnowledgeBox',
+                         'misc',
                       ) if key not in link]
 
                     Link(
@@ -149,6 +151,8 @@ class SearchEngineResultsPage(Base):
                         isTweetCarousel=link['isTweetCarousel'],
                         isMapsLocations=link['isMapsLocations'],
                         isMapsPlaces=link['isMapsPlaces'],
+                        isKnowledgeBox=link['isKnowledgeBox'],
+                        misc=link['misc']
                     )
         for key, value in parser.related_keywords.items():
             if isinstance(value, list) and len(value) > 0:
@@ -205,6 +209,7 @@ class Link(Base):
     isMapsPlaces = Column(Boolean)
     isMapsLocations = Column(Boolean)
     isNewsCarousel = Column(Boolean)
+    isKnowledgeBox = Column(Boolean)
 
     serp_id = Column(Integer, ForeignKey('serp.id'))
     serp = relationship(

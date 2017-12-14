@@ -44,12 +44,13 @@ class GoogleParser(Parser):
                 'isMapsPlaces': MAPS_PLACES_SELECTOR,
                 'isMapsLocations': MAPS_LOCATIONS_SELECTOR,
                 'isNewsCarousel': 'div._Ocr',
+                'isKnowledgeBox': 'div.kp-blk',
             },
         },
         'tweets': {
             'us_ip_tweets_items': {
                 'container': 'g-inner-card._dCh._KBh',
-                'link': 'g-inner-card g-link a::attr(href)',
+                'link': 'g-inner-card div._yAh g-link a::attr(href)',
                 'snippet': 'g-inner-card::text',
                 'title': 'g-inner-card div._Jvo::text',
                 'visible_link': 'g-inner-card a._Lgi::text',

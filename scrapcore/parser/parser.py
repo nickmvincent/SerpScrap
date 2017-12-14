@@ -183,11 +183,14 @@ class Parser():
                     # The more probable case first.
                     found_container = False
                     serp_result['rank'] = index + 1 - num_rightfully_skipped
-                    for key in ['isTweetCarousel', 'isMapsPlaces', 'isMapsLocations', 'isNewsCarousel', ]:
+                    for key in ['isTweetCarousel', 'isMapsPlaces', 'isMapsLocations', 'isNewsCarousel', 'isKnowledgeBox']:
                         if serp_result.get(key):
                             serp_result[key] = True
                             found_container = True
-
+                    if serp_result.get('isKnowledgeBox'):
+                        print('attempting to get all content')
+                        all_content = self.advanced_css('*', result)
+                        serp_result['misc'] = all_content
                     if (
                         found_container
                     ) or (
@@ -204,11 +207,6 @@ class Parser():
                         self.num_results += 1
                     elif 'keyword' in serp_result and serp_result['keyword']:
                         self.related_keywords[result_type].append(serp_result)
-                    else:
-                        all_text = self.advanced_css('*::text', result)
-                        print(all_text)
-                        serp_result['misc'] = all_text
-                        self.search_results[result_type].append(serp_result)
 
 
 
