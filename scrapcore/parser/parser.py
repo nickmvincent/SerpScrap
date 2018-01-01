@@ -170,11 +170,12 @@ class Parser():
                     # selector is the selector to grab these items
                     for key, selector in selectors_to_use.items():
                         serp_result[key] = self.advanced_css(selector, result)
-                    # skip prerender links
-                    has_prerender = self.advanced_css('link::attr(rel)', result)
-                    if has_prerender == 'prerender':
-                        num_rightfully_skipped += 1
-                        continue
+
+                    # # skip prerender links
+                    # has_prerender = self.advanced_css('link::attr(rel)', result)
+                    # if has_prerender == 'prerender':
+                    #     num_rightfully_skipped += 1
+                    #     continue
                         
 
                     # only add items that have not None links.
@@ -196,17 +197,19 @@ class Parser():
                     ) or (
                         'link' in serp_result and serp_result['link'] and
                             not [e for e in self.search_results[result_type]
-                                 if e['link'] == serp_result['link']]
+                                 if e['link'] == serp_result['link'] and not e.get('isKnowledgeBox')]
                     ) or (
                         result_type in [
                             'knowledge_panel', 'tweets',
                             'maps_places', 'maps_locations',
-                        ]
+                        ] or serp_result.get('isKnowledgeBox')
                     ):
                         self.search_results[result_type].append(serp_result)
                         self.num_results += 1
                     elif 'keyword' in serp_result and serp_result['keyword']:
                         self.related_keywords[result_type].append(serp_result)
+                    else:
+                        num_rightfully_skipped += 1
 
 
 

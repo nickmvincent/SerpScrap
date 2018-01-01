@@ -273,6 +273,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                     randint(600, 900)
                 )
             )
+            if self.config.get('mobile_emulation'):
+                mobile_emulation = { "deviceName": "Nexus 5" }
+                chrome_ops.add_experimental_option("mobileEmulation", mobile_emulation)
             self.webdriver = webdriver.Chrome(
                 executable_path=self.config['executable_path'],
                 chrome_options=chrome_ops
@@ -346,6 +349,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             useragent = random_user_agent(
                 mobile=self.config.get('mobile_user_agent', False)
             )
+            print(useragent)
             logger.info('useragent: {}'.format(useragent))
             dcap = dict(DesiredCapabilities.PHANTOMJS)
             dcap["phantomjs.page.settings.userAgent"] = useragent

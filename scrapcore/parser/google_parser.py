@@ -46,6 +46,21 @@ class GoogleParser(Parser):
                 'isNewsCarousel': 'div._Ocr',
                 'isKnowledgeBox': 'div.kp-blk',
             },
+            # 'us_ip_mobile_ua': {
+            #     'container': '#center_col',
+            #     'result_container': 'div._NId > div > *',
+            #     'link': 'h3.r a:first-of-type::attr(href)',
+            #     'snippet': 'div.s span.st::text',
+            #     'title': 'h3.r a:first-of-type::text',
+            #     'visible_link': 'cite::text',
+            #     'rating': 'div.f.slp::text',
+            #     'sitelinks': 'div.osl::text',
+            #     'isTweetCarousel': 'div._nip',
+            #     'isMapsPlaces': MAPS_PLACES_SELECTOR,
+            #     'isMapsLocations': MAPS_LOCATIONS_SELECTOR,
+            #     'isNewsCarousel': 'div._Ocr',
+            #     'isKnowledgeBox': 'div.kp-blk',
+            # },
         },
         'tweets': {
             'us_ip_tweets_items': {
