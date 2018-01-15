@@ -189,7 +189,6 @@ class Parser():
                             serp_result[key] = True
                             found_container = True
                     if serp_result.get('isKnowledgeBox'):
-                        print('attempting to get all content')
                         all_content = self.advanced_css('*', result)
                         serp_result['misc'] = all_content
                     if (

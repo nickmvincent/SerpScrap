@@ -261,6 +261,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
             chrome_ops.add_argument('--no-sandbox')
             chrome_ops.add_argument('--start-maximized')
+            chrome_ops.add_argument('--disable-gpu')
             chrome_ops.add_argument(
                 '--window-position={},{}'.format(
                     randint(10, 30),
