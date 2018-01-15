@@ -224,27 +224,15 @@ class Core():
 
                 if use_control:
                     for thread, control_thread in zip(threads, control_threads):
-                        try:
-                            thread.start()
-                            thread.mark_category(category)
-                        except WebDriverException:
-                            time.sleep(10)
-                            thread.start()
-                            tthread.mark_category(category)
+                        thread.start()
+                        thread.mark_category(category)
                         control_thread.mark_as_control()
                         control_thread.start()
                         control_thread.mark_category(category)
                 else:
                     for thread in threads:
-                        try:
-                            thread.start()
-                            thread.mark_category(category)
-                        except WebDriverException:
-                            time.sleep(10)
-                            print('Got a WebDriverException but it was caught by code!')
-                            print('Sleeping 10 seconds and retry')
-                            thread.start()
-                            thread.mark_category(category)
+                        thread.start()
+                        thread.mark_category(category)
                         time.sleep(BETWEEN_THREADS)
                 for thread in threads:
                     thread.join()

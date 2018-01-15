@@ -288,7 +288,16 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             )
             return True
         except WebDriverException:
-            raise
+            print('Sleeping 10 sec within selenium.py')
+            time.sleep(10)
+            try:
+                self.webdriver = webdriver.Chrome(
+                    executable_path=self.config['executable_path'],
+                    chrome_options=chrome_ops,
+                    service_args=["--verbose", "--log-path=" + self.config['chromedriver_log']]
+                )
+            except WebDriverException:
+                raise
         return False
 
     def _get_Firefox(self):
