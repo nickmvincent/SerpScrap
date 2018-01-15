@@ -17,6 +17,8 @@ from scrapcore.tools import Proxies
 from scrapcore.tools import ScrapeJobGenerator
 from scrapcore.tools import ShowProgressQueue
 from scrapcore.validator_config import ValidatorConfig
+from selenium.common.exceptions import TimeoutException, WebDriverException
+
 
 BETWEEN_THREADS = 5
 
@@ -222,16 +224,28 @@ class Core():
 
                 if use_control:
                     for thread, control_thread in zip(threads, control_threads):
-                        thread.start()
-                        thread.mark_category(category)
+                        try:
+                            thread.start()
+                            thread.mark_category(category)
+                        except WebDriverException:
+                            time.sleep(10)
+                            thread.start()
+                            tthread.mark_category(category)
                         control_thread.mark_as_control()
                         control_thread.start()
                         control_thread.mark_category(category)
                 else:
                     for thread in threads:
-                        thread.start()
+                        try:
+                            thread.start()
+                            thread.mark_category(category)
+                        except WebDriverException:
+                            time.sleep(10)
+                            print('Got a WebDriverException but it was caught by code!')
+                            print('Sleeping 10 seconds and retry')
+                            thread.start()
+                            thread.mark_category(category)
                         time.sleep(BETWEEN_THREADS)
-                        thread.mark_category(category)
                 for thread in threads:
                     thread.join()
                 for thread in control_threads:

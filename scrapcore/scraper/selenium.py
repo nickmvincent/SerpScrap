@@ -229,7 +229,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             os.environ['DISPLAY'] = self.xvfb_display
 
     def _try_dbus_fix(self):
-        os.environ['DBUS_SESSION_BUS_ADDRESS'] = '/dev/null'
+        os.environ['DBUS_SESSION_BUS_ADDRESS'] = 'disabled:'
         print(os.environ['DBUS_SESSION_BUS_ADDRESS'])
 
     def _get_webdriver(self):
@@ -779,6 +779,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             self._set_xvfb_display()
             self._try_dbus_fix()
 
+            
             if not self._get_webdriver():
                 raise Exception('{}: Aborting due to no available selenium webdriver.'.format(self.name))
 
