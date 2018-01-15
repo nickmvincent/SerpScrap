@@ -288,8 +288,8 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             )
             return True
         except WebDriverException:
-            print('Sleeping 10 sec within selenium.py')
-            time.sleep(10)
+            print('Sleeping 30 sec within selenium.py')
+            time.sleep(30)
             try:
                 self.webdriver = webdriver.Chrome(
                     executable_path=self.config['executable_path'],
