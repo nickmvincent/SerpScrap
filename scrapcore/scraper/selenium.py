@@ -298,6 +298,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 )
             except WebDriverException:
                 raise
+            return True
         return False
 
     def _get_Firefox(self):
