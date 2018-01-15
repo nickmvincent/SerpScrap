@@ -278,7 +278,8 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 chrome_ops.add_experimental_option("mobileEmulation", mobile_emulation)
             self.webdriver = webdriver.Chrome(
                 executable_path=self.config['executable_path'],
-                chrome_options=chrome_ops
+                chrome_options=chrome_ops,
+                service_args=["--verbose", "--log-path=" + self.config['chromedriver_log']]
             )
             return True
         except WebDriverException:
