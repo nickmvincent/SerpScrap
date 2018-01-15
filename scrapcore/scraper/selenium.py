@@ -229,7 +229,8 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             os.environ['DISPLAY'] = self.xvfb_display
 
     def _try_dbus_fix(self):
-        os.environ['DBUS_SESSION_BUS_ADDRESS'] = 'disabled:'
+        os.environ['DBUS_SESSION_BUS_ADDRESS'] = '/dev/null'
+        print(os.environ['DBUS_SESSION_BUS_ADDRESS'])
 
     def _get_webdriver(self):
         """Return a webdriver instance and set it up
