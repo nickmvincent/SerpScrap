@@ -146,7 +146,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             self.scrape_method
         )
         self.is_control_thread = False
-        super().instance_creation_info(self.__class__.__name__)
+        # NMV 1/15/2018 - haven't found this logger useful yet so commenting for now
+        # note to future self - maybe uncomment?
+        # super().instance_creation_info(self.__class__.__name__)
 
 
     def mark_as_control(self):
@@ -230,7 +232,6 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
     def _try_dbus_fix(self):
         os.environ['DBUS_SESSION_BUS_ADDRESS'] = 'disabled:'
-        print(os.environ['DBUS_SESSION_BUS_ADDRESS'])
 
     def _get_webdriver(self):
         """Return a webdriver instance and set it up
@@ -287,8 +288,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 service_args=["--verbose", "--log-path=" + self.config['chromedriver_log']]
             )
             return True
-        except WebDriverException:
-            print('Sleeping 30 sec within selenium.py')
+        except WebDriverException as err:
+            print(err)
+            print('Sleeping 30 sec within selenium.py b/c there was a webdriver exception')
             time.sleep(30)
             try:
                 self.webdriver = webdriver.Chrome(
@@ -365,7 +367,6 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             useragent = random_user_agent(
                 mobile=self.config.get('mobile_user_agent', False)
             )
-            print(useragent)
             logger.info('useragent: {}'.format(useragent))
             dcap = dict(DesiredCapabilities.PHANTOMJS)
             dcap["phantomjs.page.settings.userAgent"] = useragent
@@ -698,8 +699,9 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         else:
             logger.debug('{}: Cannot get handle to the input form for keyword {}.'.format(self.name, self.query))
 
-        super().detection_prevention_sleep()
-        super().keyword_info()
+        # 1/15/2018 - commented temporarily b/c not helping with the current issue        
+        # super().detection_prevention_sleep()
+        # super().keyword_info()
 
         for self.page_number in self.pages_per_keyword:
             self.wait_until_serp_loaded()

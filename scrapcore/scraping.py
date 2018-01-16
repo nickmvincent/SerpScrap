@@ -242,6 +242,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
                     all=self.num_keywords
                     ))
 
+    # commented the call out in selenium.py
     def instance_creation_info(self, scraper_name):
         """Debug message whenever a scraping worker is created"""
         logger.info('''

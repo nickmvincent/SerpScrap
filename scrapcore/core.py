@@ -6,7 +6,7 @@ import queue
 import threading
 import time
 
-from random import shuffle
+from random import shuffle, randrange
 from scrapcore.cachemanager import CacheManager
 from scrapcore.database import ScraperSearch
 from scrapcore.database import get_session, fixtures
@@ -21,6 +21,7 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 
 
 BETWEEN_THREADS = 5
+RAND_MAX = 5
 
 
 class Core():
@@ -133,15 +134,15 @@ class Core():
                 # used in selenium instances.
                 captcha_lock = threading.Lock()
 
-                self.logger.info(
-                    '''
-                    Going to scrape {num_keywords} single_keyword_as_list with {num_proxies}
-                    proxies by using {num_threads} threads.
-                    '''.format(
-                        num_keywords=len(scrape_jobs),
-                        num_proxies=len(proxies),
-                        num_threads=num_search_instances)
-                    )
+                # self.logger.info(
+                #     '''
+                #     Going to scrape {num_keywords} single_keyword_as_list with {num_proxies}
+                #     proxies by using {num_threads} threads.
+                #     '''.format(
+                #         num_keywords=len(scrape_jobs),
+                #         num_proxies=len(proxies),
+                #         num_threads=num_search_instances)
+                #     )
 
                 progress_thread = None
 
@@ -234,6 +235,10 @@ class Core():
                         thread.start()
                         thread.mark_category(category)
                         time.sleep(BETWEEN_THREADS)
+                        time.sleep(randrange(
+                            0,
+                            RAND_MAX
+                        ))
                 for thread in threads:
                     thread.join()
                 for thread in control_threads:
