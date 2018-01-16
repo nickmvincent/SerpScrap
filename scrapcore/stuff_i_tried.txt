@@ -1,0 +1,9 @@
+Xvfb :1 -screen 0 1024x900x24
+export DISPLAY=:1
+
+export DBUS_SESSION_BUS_ADDRESS=disabled:
+^^ also set this in the code
+
+When we get WebDriverException
+Sleep 30 seconds IN THE THREAD and try again... 
+doesn't catch all of them!

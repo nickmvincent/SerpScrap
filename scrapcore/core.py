@@ -17,10 +17,10 @@ from scrapcore.tools import Proxies
 from scrapcore.tools import ScrapeJobGenerator
 from scrapcore.tools import ShowProgressQueue
 from scrapcore.validator_config import ValidatorConfig
-from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.common.exceptions import TimeoutException
 
 
-BETWEEN_THREADS = 5
+BETWEEN_THREADS = 10
 RAND_MAX = 5
 
 

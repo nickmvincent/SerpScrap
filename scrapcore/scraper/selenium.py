@@ -3,27 +3,26 @@ import datetime
 import json
 import logging
 import os
-from random import randint
 import re
 import tempfile
 import threading
 import time
+from random import randint
 from urllib.parse import quote
 
-from scrapcore.scraping import MaliciousRequestDetected
-from scrapcore.scraping import SearchEngineScrape, SeleniumSearchError
-from scrapcore.scraping import get_base_search_url_by_search_engine
+from scrapcore.scraping import (MaliciousRequestDetected, SearchEngineScrape,
+                                SeleniumSearchError,
+                                get_base_search_url_by_search_engine)
 from scrapcore.user_agent import random_user_agent
 from selenium import webdriver
-from selenium.common.exceptions import ElementNotVisibleException
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.common.exceptions import (ElementNotVisibleException,
+                                        NoSuchElementException,
+                                        TimeoutException, WebDriverException)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
 
 logger = logging.getLogger(__name__)
 
@@ -290,17 +289,20 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             return True
         except WebDriverException as err:
             print(err)
-            print('Sleeping 30 sec within selenium.py b/c there was a webdriver exception')
-            time.sleep(30)
-            try:
-                self.webdriver = webdriver.Chrome(
-                    executable_path=self.config['executable_path'],
-                    chrome_options=chrome_ops,
-                    service_args=["--verbose", "--log-path=" + self.config['chromedriver_log']]
-                )
-            except WebDriverException:
-                raise
-            return True
+            retry_count = 0
+            while retry_count < 5:
+                retry_count += 1
+                print('Sleeping 10 sec within selenium.py b/c there was a webdriver exception. This is retry #{}'.format(retry_count))
+                time.sleep(10)
+                try:
+                    self.webdriver = webdriver.Chrome(
+                        executable_path=self.config['executable_path'],
+                        chrome_options=chrome_ops,
+                        service_args=["--verbose", "--log-path=" + '../special_chromedriver_error.log']
+                    )
+                    return True
+                except WebDriverException:
+                    continue
         return False
 
     def _get_Firefox(self):
@@ -700,7 +702,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             logger.debug('{}: Cannot get handle to the input form for keyword {}.'.format(self.name, self.query))
 
         # 1/15/2018 - commented temporarily b/c not helping with the current issue        
-        # super().detection_prevention_sleep()
+        super().detection_prevention_sleep()
         # super().keyword_info()
 
         for self.page_number in self.pages_per_keyword:
