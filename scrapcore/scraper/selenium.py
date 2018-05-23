@@ -8,6 +8,7 @@ import tempfile
 import threading
 import time
 from random import randint
+import signal
 from urllib.parse import quote
 
 from scrapcore.scraping import (MaliciousRequestDetected, SearchEngineScrape,
@@ -205,6 +206,11 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         Saves a debug screenshot of the browser window to figure
         out what went wrong.
         """
+        if self.config.get('sel_browser') == 'chrome' and self.config.get('chrome_headless') is True:
+            """screenshots in headless chrome does not work at the moment"""
+            logger.info('no screenshot for chrome headless possible, may be working in the future')
+            return
+
         screendir = '{}/{}'.format(
             self.config['dir_screenshot'],
             self.config['today']
@@ -220,9 +226,12 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 str(self.page_number),
             )
         )
+
+        if self.config.get('sel_browser') == 'chrome' and self.config.get('chrome_headless') is True:
+            self._enable_download_in_headless_chrome(self.webdriver, screendir)
         try:
             self.webdriver.get_screenshot_as_file(location)
-        except (ConnectionError, ConnectionRefusedError, ConnectionResetError) as err:
+        except Exception as err:
             logger.error(err)
 
     def _set_xvfb_display(self):
@@ -249,6 +258,13 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
         return False
 
+    def _enable_download_in_headless_chrome(self, browser, download_dir):
+        #add missing support for chrome "send_command"  to selenium webdriver
+        browser.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+    
+        params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
+        browser.execute("send_command", params)
+
     def _get_Chrome(self):
         try:
             chrome_ops = webdriver.ChromeOptions()
@@ -263,9 +279,12 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                     )
                 )
 
+            if self.config.get('chrome_headless') is True:
+                chrome_ops.add_argument('--headless')
             chrome_ops.add_argument('--no-sandbox')
             chrome_ops.add_argument('--start-maximized')
             chrome_ops.add_argument('--disable-gpu')
+            chrome_ops.add_argument('--verbose')
             chrome_ops.add_argument(
                 '--window-position={},{}'.format(
                     randint(10, 30),
@@ -464,7 +483,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         else:
             return {}
 
-    def _wait_until_search_input_field_appears(self, max_wait=5):
+    def _wait_until_search_input_field_appears(self, max_wait=10):
         """Waits until the search input field can be located for the current search engine
 
         Args:
@@ -585,7 +604,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         if self.search_type == 'normal':
 
             if self.search_engine_name == 'google':
-                selector = '#navcnt td.cur'
+                selector = '#resultStats'
             elif self.search_engine_name == 'yandex':
                 selector = '.pager__item_current_yes font font'
             elif self.search_engine_name == 'bing':
@@ -600,29 +619,21 @@ class SelScrape(SearchEngineScrape, threading.Thread):
             elif self.search_engine_name == 'ask':
                 selector = '#paging .pgcsel .pg'
 
-            # content = None
             try:
-                time.sleep(1)
-                WebDriverWait(self.webdriver, 5).until(
-                    EC.text_to_be_present_in_element(
-                        (By.CSS_SELECTOR, selector),
-                        str(self.page_number)
-                    )
-                )
-            except TimeoutException:
+                WebDriverWait(self.webdriver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, selector)))
+            except NoSuchElementException:
+                logger.error('No such element. Seeing if title matches before raising SeleniumSearchError')
                 self._save_debug_screenshot()
                 try:
-                    self.webdriver.find_element_by_css_selector(selector).text
-                except NoSuchElementException:
-                    logger.error('Skipp it, no such element - SeleniumSearchError')
+                    self.wait_until_title_contains_keyword()
+                except TimeoutException:
+                    self.quit()
                     raise SeleniumSearchError('Stop Scraping, seems we are blocked')
-            except Exception:
+            except Exception as e:
                 logger.error('Scrape Exception pass. Selector: ' + str(selector))
+                logger.error('Error: ' + str(e))
                 self._save_debug_screenshot()
                 pass
-
-        elif self.search_type == 'image':
-            self.wait_until_title_contains_keyword()
 
         else:
             self.wait_until_title_contains_keyword()
@@ -652,7 +663,8 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
         if self.search_input:
             try:
-                self.search_input.clear()
+                if self.config.get('sel_browser') != 'chrome' or (self.config.get('sel_browser') == 'chrome' and self.config.get('chrome_headless') is False):
+                    self.search_input.clear()
             except Exception as e:
                 raise ValueError('Got Blocked!')
                 # logger.error('Possible blocked search, sleep 30 sec, Scrape Exception: ' + str(e))
@@ -761,12 +773,15 @@ class SelScrape(SearchEngineScrape, threading.Thread):
                 logger.error(err)
             except WebDriverException:
                 self.html = self.webdriver.page_source
+            except Exception as err:
+                logger.error(err)
 
             super().after_search()
 
             # Click the next page link not when leaving the loop
             # in the next iteration.
-            if self.page_number in self.pages_per_keyword:
+            if self.page_number + 1 in self.pages_per_keyword:
+                logger.info('Requesting the next page')
                 next_url = self._goto_next_page()
                 self.requested_at = datetime.datetime.utcnow()
 
@@ -816,6 +831,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
 
     def quit(self):
         if self.webdriver:
+            self.webdriver.close()
             self.webdriver.quit()
 
 

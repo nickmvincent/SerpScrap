@@ -15,23 +15,26 @@ Ensure the executing user has read/write permissions for this folder.
 Default configuration
 ---------------------
 
-* cachedir: '/tmp/.serpscrap/'        - path cachefiles
-* clean_cache_after: 24               - clean cached files older then x hours
 * database_name: '/tmp/serpscrap'     - path and name sqlite db (stores scrape results)
-* do_caching: True                    - enable / disable caching
-* headers:                            - dict to customize request header, see below
-* num_pages_for_keyword: 2            - number of result pages to scrape
-* num_results_per_page: 10            - number results per searchengine page
-* proxy_file: ''                      - path to proxy file, see below
-* scrape_urls: False                  - scrape urls of search results
 * search_instances: [{engine:'google'}] - search engines/location
-* url_threads: 3                      - number of threads if scrape_urls is true
-* use_own_ip: True                    - if using proxies set to False
-* sleeping_min: 5                     - min seconds to sleep between scrapes
-* sleeping_max: 15                    - max seconds to sleep between scrapes
-* screenshot: True                    - enable screenshots for each query
-* dir_screenshot: '/tmp/screenshots'  - basedir for saved screenshots
 
+* cachedir: '/tmp/.serpscrap/'                        - path cachefiles
+* chrome_headless: True                               - run chrome in headless mode, default is True
+* clean_cache_after: 24                               - clean cached files older then x hours
+* dir_screenshot: '/tmp/screenshots'                  - basedir for saved screenshots
+* do_caching: True                                    - enable / disable caching
+* executable_path: '/usr/local/bin/chromedriver'      - path to chromedriver
+* google_search_url: 'https://www.google.com/search?' - base search url, modify for other countries
+* headers:                                            - dict to customize request header, see below
+* num_pages_for_keyword: 2                            - number of result pages to scrape
+* num_results_per_page: 10                            - number results per searchengine page
+* proxy_file: ''                                      - path to proxy file, see below
+* scrape_urls: False                                  - scrape urls of search results
+* screenshot: True                                    - enable screenshots for each query
+* sleeping_max: 15                                    - max seconds to sleep between scrapes
+* sleeping_min: 5                                     - min seconds to sleep between scrapes
+* url_threads: 3                                      - number of threads if scrape_urls is true
+* use_own_ip: True                                    - if using proxies set to False
 
 Custom configuration
 --------------------
@@ -48,7 +51,9 @@ Change some config params.
    scrap = serpscrap.SerpScrap()
    scrap.init(config=config.get(), keywords=keywords)
 
-Using your own configuration
+You can apply your own config dictionary. It is not required to provide any possible
+config key. by applying the default config values will be overwritten by the new values.
+for not provided config keys the deault values still exists.
 
 .. code-block:: python
 
@@ -61,10 +66,11 @@ Using your own configuration
       'database_name': '/tmp/serpscrap',
       'do_caching': True,
       'num_pages_for_keyword': 2,
-      'proxy_file': '',
       'scrape_urls': True,
       'search_instance': [{'engine':'google'}],
       'url_threads': 3,
+      'google_search_url': 'https://www.google.com/search?',
+      'executable_path', '/usr/local/bin/chromedriver',
    }
    
    config.apply(config_new)

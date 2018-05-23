@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
-version = '0.9.1'
+version = '0.10.2'
 
 
 setup(
@@ -22,14 +22,14 @@ setup(
     license='MIT',
     packages=find_packages(),
     install_requires=[
-        'PySocks==1.6.7',
+        'PySocks==1.6.8',
         'chardet==3.0.4',
         'beautifulsoup4==4.6.0',
-        'html2text==2016.9.19',
-        'lxml',
-        'sqlalchemy==1.1.13',
-        'selenium==3.5.0',
-        'cssselect==1.0.1',
+        'html2text==2018.1.9',
+        'lxml==4.2.1',
+        'sqlalchemy==1.2.7',
+        'selenium==3.11.0',
+        'cssselect==1.0.3',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -40,5 +40,5 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
-    keywords='serp-scraper url-scraper ad-detection',
+    keywords='seo scraper ad-detection scraping keywords',
 )

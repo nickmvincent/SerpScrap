@@ -23,7 +23,7 @@ It might be usefull for SEO and research tasks.
 Extract these result types
 --------------------------
 
-* ads_main - advertisments within regular search results
+* ads_main - advertisements within regular search results
 * image - result from image search
 * news - news teaser within regular search results
 * results - standard search result
@@ -110,6 +110,11 @@ To avoid encode/decode issues use this command before you start using SerpScrap 
 Changes
 -------
 Notes about major changes between releases
+
+0.10.0
+======
+
+* support for headless chrome, adjusted default time between scrapes
 
 0.9.0
 =====
